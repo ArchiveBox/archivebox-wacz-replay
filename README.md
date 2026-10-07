@@ -1,106 +1,159 @@
-# ArchiveBox Replay
+<div align="center">
+  <img src="public/archive.png" width="76" alt="ArchiveBox" />
+  <h1>archivebox-wacz-replay</h1>
+  <p><strong>Open a web archive. Explore everything it captured.</strong></p>
+  <p>WACZ · WARC · ZIP · Offline replay · ArchiveBox cards &amp; plugin views</p>
+  <p>
+    <a href="#-get-started">Get started</a> ·
+    <a href="#-explore-a-capture">Features</a> ·
+    <a href="#-archive-compatibility">Compatibility</a> ·
+    <a href="#-host-it-anywhere">Hosting</a> ·
+    <a href="#-development">Development</a>
+  </p>
+  <p>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-blue" alt="License: AGPL-3.0-or-later" /></a>
+    <img src="https://img.shields.io/badge/status-preview-purple" alt="Status: preview" />
+  </p>
+</div>
 
-A standalone, static web viewer for WACZ, WARC, and ZIP archives. ArchiveBox's snapshot
-cards, output stacks, file browser, and offline plugin views surround Webrecorder's
-replay engine. No ArchiveBox server, browser extension, database service, or capture
-engine is required.
+![A real blog capture in ArchiveBox's snapshot detail interface, with output stacks, article cards, screenshot previews, and the Readability view](docs/assets/snapshot.jpg)
 
-## Run
+A standalone viewer built from **ArchiveBox's existing snapshot detail UI** and
+Webrecorder's replay engine. Open archives from your computer or a URL, then move
+between the original page, readable articles, screenshots, documents, media,
+recorded HTTP exchanges, and files.
+
+- 🗃️ **Bring your own archive.** Open `.wacz`, `.warc`, `.warc.gz`, or `.zip`, including captures made outside ArchiveBox.
+- 🃏 **Browse the familiar stacks and cards.** Expand an output stack, preview its cards, and open the full plugin view.
+- 🧩 **Discover more in the recorded content.** Derive article text, search, OCR, forums, and other applicable views from saved responses.
+- 🔎 **Inspect the evidence.** Browse files and nested ZIPs, inspect request/response headers, read JSONL records, and check package hashes.
+- 📦 **Run independently.** A static website with bundled JavaScript, Python/WASM, and OCR engines. No ArchiveBox server or extension required.
+
+**Preview:** real captures are exercised in Chromium, including large blog archives
+and forum discussions. Compatibility across every browser, producer, and plugin
+is still being verified; see [tested coverage](#-archive-compatibility).
+
+## 🚀 Get started
+
+**Requirements:** Node.js 22.12+, pnpm 10, and a desktop Chromium browser for the
+currently verified experience.
 
 ```sh
+git clone https://github.com/ArchiveBox/archivebox-wacz-replay.git
+cd archivebox-wacz-replay
 pnpm install --frozen-lockfile
 pnpm build
 pnpm preview --port 4178
 ```
 
-Open http://localhost:4178. Select or drop a `.wacz`, `.warc`, `.warc.gz`, or `.zip`, or open an HTTP(S)
-archive URL. Deploy the contents of `dist/` on any static HTTPS host, including
-under a subdirectory. Service workers require HTTPS or localhost; `file://` is not
-supported. Build before previewing: the replay service worker and WASM assets are
-part of the production bundle.
+1. Open **[localhost:4178](http://localhost:4178)**.
+2. Select or drop an archive, or enter its HTTP(S) URL.
+3. Choose a card in the snapshot's output stacks to explore that view.
 
-## View
+Build before previewing: the replay service worker and bundled engines are part
+of the production output. Use HTTPS or localhost; opening `index.html` through
+`file://` is not supported.
 
-Every capture opens in the original ArchiveBox snapshot detail layout: header,
-output stacks, expandable card trays and the full selected plugin view. Ordinary
-WARCs and third-party WACZs use the same interface as ArchiveBox captures.
+## 🧭 Explore a capture
 
-Cards are discovered from recorded evidence. HTML can provide replay, DOM,
-SingleFile, article text and metadata; saved responses can provide search, OCR,
-forums, galleries and media. Capture-only observations such as screenshots and
-accessibility require their original saved artifacts. Derived views reuse the
-vendored engines and templates; they do not invent successful capture hooks or
-write derived files into the original archive.
+| View | What you can explore |
+| --- | --- |
+| **HTML** | Interactive archived pages, DOM, and derived SingleFile views |
+| **Raster** | Saved screenshots and screenshot tiles; browser Print / Save as PDF |
+| **Article text** | Readability, Defuddle, Mercury, and plain-text views |
+| **Embedded media** | Applicable document, OCR, forum, gallery, and media views |
+| **Metadata** | Recorded HTTP exchanges, search, and saved browser observations |
+| **Other files** | Plugin outputs, package members, nested ZIPs, and downloads |
 
-The Other files stack includes the package file browser for ZIP/WACZ inputs,
-with nested ZIP browsing and downloads. Archive results, original JSONL metadata,
-and package integrity checks are available below the selected output.
-The header's download control returns the original bytes unchanged.
+Cards depend on the **evidence inside the archive**. Ordinary WARCs and third-party
+WACZs get the same interface: ArchiveBox hook records are not required for derived
+views. Screenshots, accessibility trees, and other capture-time observations need
+their original saved artifacts.
 
-ArchiveBox browser records and server-style Snapshot/ArchiveResult records enrich
-views when present. Unknown plugins remain accessible as files and metadata.
-Malformed or unsupported optional metadata produces a notice without hiding the
-underlying package. Archives without a replay index remain browsable as ZIPs.
+<table>
+<tr>
+<td width="50%"><img src="docs/assets/forum.jpg" alt="A captured Hacker News discussion rendered by the forum engine, with 486 captured replies" /></td>
+<td width="50%"><img src="docs/assets/ocr.jpg" alt="The blog capture's image and OCR view, showing recorded images and recognized text" /></td>
+</tr>
+<tr>
+<td align="center"><sub>A real Hacker News discussion with 486 rendered replies</sub></td>
+<td align="center"><sub>Images and OCR from a 117 MB blog capture</sub></td>
+</tr>
+</table>
 
-Local inputs are copied into browser OPFS so replay frames and output tabs can read
-on demand. Reload retains the open archive. Returning to the archive picker through the ArchiveBox header removes its local
-source copy. This is viewer storage, not an ArchiveBox collection or sync client.
-Remote WACZ replay uses range requests; the remote host must permit CORS and byte
-ranges. `?source=https%3A...` opens an archive directly; use that URL in an iframe
-to embed the viewer. An output card also opens its individual view in a new tab.
+The **Other files** stack opens the ZIP/WACZ file browser. Archive results, original
+JSONL metadata, and integrity checks sit below the selected output. Individual
+cards can open in their own tabs; the header's download control returns the
+original archive bytes unchanged.
 
-Plugin derivations operate on recorded responses. Python/WASM, OCR, media and
-article libraries are bundled locally. Native browser **Print / Save as PDF**
-replaces extension-only automatic PDF generation. Accessibility trees can be
-shown when recorded; this website cannot ask Chrome's debugger to generate one.
+<details>
+<summary><strong>Local storage, missing resources, and metadata</strong></summary>
 
-## Static hosting
+- Local inputs are copied into the browser's Origin Private File System (OPFS), so replay frames and output tabs can read them on demand. Reload retains the open archive. Returning to the archive picker through the ArchiveBox header removes its local source copy.
+- Derived views work from recorded responses. Missing resources remain missing; replay does not fetch them from the original site. Derivations do not alter the original package or invent successful capture records.
+- ArchiveBox browser records and server-style `Snapshot` / `ArchiveResult` JSONL records enrich views when present. Unknown plugins remain accessible through files and metadata.
+- Malformed or unsupported optional metadata produces a notice without hiding the package. ZIPs without a replay index remain browsable as files.
+- This is viewer storage, not an ArchiveBox collection or a sync client.
 
-Serve the public bundled JavaScript, WASM and Python dependency files with
-`Access-Control-Allow-Origin: *`. The opaque Python sandbox loads these public
-assets with `Origin: null`; missing CORS headers prevent the engine from starting.
-`pnpm preview` and `pnpm dev` configure this. The included `_headers` supplies the
-same header for Netlify/Cloudflare Pages. Other static hosts need an equivalent
-header rule. This applies to the public application bundle, never OPFS archive
-contents. HTTPS/localhost and JavaScript/WASM MIME types are also required.
+</details>
 
-## Replay compatibility
+## 🌍 Archive compatibility
 
-Real Chromium acceptance tests cover:
+Real Chromium acceptance tests cover these producer outputs:
 
-| Producer | Tested output | Checks |
+| Producer | Tested format | Verified behavior |
 | --- | --- | --- |
-| GNU wget 1.25.0 | WARC 1.0, plain and gzip | HTML, CSS, JS, image, iframe, navigation both directions, reload, original bytes |
-| grab-site 2.2.7 / wpull 3.0.9 | WARC 1.0, plain and gzip | Same offline crawler checks |
-| ArchiveWeb.page 0.15.1 | WACZ 1.1.1 | Main page, nested iframe, package hashes, reload, original bytes |
-| ArchiveBox JS | Complete sweeting.me WACZ captured 2026-10-05 | Replay text and image, plugin screenshot and derived SingleFile, JSONL, package hashes, reload, original bytes |
+| **GNU wget 1.25.0** | WARC 1.0, plain and gzip | HTML, CSS, JavaScript, images, iframes, navigation, reload, original-byte downloads |
+| **grab-site 2.2.7 / wpull 3.0.9** | WARC 1.0, plain and gzip | The same offline crawler replay checks |
+| **ArchiveWeb.page 0.15.1** | WACZ 1.1.1 | Main page, nested iframe, package hashes, reload, original-byte downloads |
+| **ArchiveBox JS** | WACZ with plugin artifacts and JSONL | Replay, screenshots, derived SingleFile, metadata, package hashes, reload, original-byte downloads |
 
-Raw WARC inputs use Webrecorder's streaming CDX indexer and on-demand record
-reader; they are not converted to WACZ. HTML responses supply the saved-page list
-when the archive has no explicit pages index. Raw WARC responses also power the
-original derived cards and HTTP request/response inspector; ZIP member browsing
-and package Integrity apply to ZIP/WACZ containers.
+The suite includes real captures of **sweeting.me**, **docs.sweeting.me/s/blog**,
+and **news.ycombinator.com**, plus an **18 MB discussion archive with 486 rendered
+replies**. A **117 MB blog WACZ** has also been manually inspected for images,
+screenshot tiles, OCR, and article views; that large file is not committed.
+See [fixture provenance](tests/fixtures/README.md) and
+[real-site captures](tests/fixtures/real-sites/README.md).
+
 Both local imports and remote HTTP range loading are tested. Crawler replay tests
-run after shutting down the original site, and local replay checks reject live
-network requests to original sites.
+shut down the original site, and local replay checks reject requests to original
+sites. Raw WARCs use Webrecorder's streaming CDX indexer and on-demand record
+reader without conversion to WACZ; HTML responses supply the saved-page list when
+there is no explicit pages index.
 
-The main acceptance fixtures now also include real wget captures of sweeting.me,
-docs.sweeting.me/s/blog and news.ycombinator.com, a grab-site blog crawl, and an
-18 MB ArchiveBox JS discussion with 486 rendered replies. Checks exercise the
-original stacks, rendered article cards, search, HTTP exchanges and the actual
-Python forum engine. A 117 MB blog WACZ is also inspected manually for its full
-images, screenshot tiles, OCR and article views; it is not committed as a fixture.
+**Current limits:** these fixtures do not establish exhaustive support for every
+producer version, browser, or plugin renderer. ArchiveWeb.page coverage currently
+uses a small iframe capture. Multi-file crawl sets with cross-file revisit
+dependencies and very large archives need further coverage. A single WARC can
+only replay resources available in that file. Crawlers may omit images inserted
+by JavaScript; the viewer cannot reconstruct responses that were never captured.
 
-Crawler captures can omit images inserted by JavaScript after page load. Those
-missing records remain missing during replay; the viewer never fetches them live.
+## ☁️ Host it anywhere
 
-These are compatibility fixtures, not exhaustive coverage of every producer
-version or capture. Multi-file crawl sets with cross-file revisit dependencies,
-very large archives, and every plugin renderer are not yet covered. A single WARC
-can only replay resources available in that file; missing crawl parts are not
-fetched from the original site.
+Deploy **`dist/`** to a static HTTPS host, including under a subdirectory.
+Configure the host to serve the public application assets with:
 
-## Develop and verify
+```http
+Access-Control-Allow-Origin: *
+```
+
+The bundled Python sandbox loads public JavaScript, WASM, and Python dependencies
+with `Origin: null`, so this header is required. `pnpm preview` and `pnpm dev`
+configure it locally; the included [`public/_headers`](public/_headers) supplies
+it for Netlify / Cloudflare Pages. Other hosts need an equivalent rule. Serve
+JavaScript and WASM with their correct MIME types. These headers apply to the
+public application bundle, never to OPFS archive contents.
+
+**Open or embed a remote archive** using the `source` query parameter:
+
+```text
+https://your-viewer.example/?source=https%3A%2F%2Fyour-archives.example%2Fcapture.wacz
+```
+
+Use that viewer URL in an iframe to embed it. The archive host must also permit
+CORS and HTTP byte ranges; remote WACZ replay reads the required ranges on demand.
+
+## 🛠️ Development
 
 ```sh
 pnpm typecheck
@@ -108,9 +161,36 @@ pnpm exec playwright install chromium
 pnpm test
 ```
 
-Tests open real WACZ captures through the public file picker in a normal browser,
-check replay, original-byte downloads, package hashes, reload and ZIP browsing.
-See `VENDORING.md` and `tests/fixtures/README.md` for provenance.
+`pnpm test` builds the application and exercises real archives through the public
+browser UI. It checks replay, derived views, original-byte downloads, package
+hashes, reload, and ZIP browsing.
 
-The viewer is derived from AGPL-3.0-or-later ArchiveBox JS and the browser extension.
-Original notices and third-party licenses remain in `LICENSES/` and `vendor/`.
+| Location | Responsibility |
+| --- | --- |
+| [`src/archive/`](src/archive/) | Archive readers, recorded evidence, metadata, and derived-view adapters |
+| [`src/ui/`](src/ui/) | Snapshot stacks, card previews, and plugin presentation |
+| [`src/replay/`](src/replay/) | Replay integration |
+| [`abx-plugins/`](abx-plugins/) | Vendored plugin views and supporting code |
+| [`vendor/`](vendor/) | ArchiveBox templates, replay components, and upstream engines |
+| [`tests/`](tests/) | Browser acceptance tests and real capture fixtures |
+
+Keep plugin changes upstream; this repository adapts archives and presents their
+contents. See **[VENDORING.md](VENDORING.md)** for pinned source revisions,
+licenses, and update boundaries. Builds do not depend on sibling checkouts.
+
+## 💜 Part of the ArchiveBox ecosystem
+
+- **[ArchiveBox](https://github.com/ArchiveBox/ArchiveBox)** manages collections, scheduling, search, and server APIs.
+- **[archivebox-js](https://github.com/ArchiveBox/archivebox-js)** provides the browser capture engine and shared plugin runtime.
+- **[archivebox-browser-extension](https://github.com/ArchiveBox/archivebox-browser-extension)** captures pages locally and connects to ArchiveBox servers.
+- **[abx-plugins](https://github.com/ArchiveBox/abx-plugins)** provides the shared plugin library and presentation templates.
+- **This repository** is the independent view layer for portable archives.
+
+Built on **[Webrecorder's ReplayWeb.page](https://github.com/webrecorder/replayweb.page)**,
+**[wabac.js](https://github.com/webrecorder/wabac.js)**, and
+**[warcio.js](https://github.com/webrecorder/warcio.js)**, with the ArchiveBox
+snapshot interface and bundled JavaScript / WASM engines.
+
+**[AGPL-3.0-or-later](LICENSE).** Vendored components retain their original notices
+in [`LICENSES/`](LICENSES/) and [`vendor/`](vendor/), including the browser
+extension's [MIT notice](LICENSES/archivebox-browser-extension-MIT.txt).
