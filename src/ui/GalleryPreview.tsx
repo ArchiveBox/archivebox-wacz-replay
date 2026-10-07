@@ -34,7 +34,8 @@ export function GalleryPreview({archive,presentation}:{archive:ArchiveReader;pre
 export async function createGalleryCardPreview({archive,capture,signal}:{archive:ArchiveReader;capture:Capture;signal?:AbortSignal}){
   // The capture hook already identifies acquired originals. A cover needs only
   // the first image; native metadata extraction belongs to the selected view.
-  const source=capture.hooks.filter(hook=>hook.plugin==='gallerydl').flatMap(hook=>hook.records||[]).map(ref=>archive.find(ref.url,ref.ts)).find(entry=>entry?.method!=='HEAD'&&entry?.mime.startsWith('image/')&&entry.status>=200&&entry.status<300);
+  let source=capture.hooks.filter(hook=>hook.plugin==='gallerydl').flatMap(hook=>hook.records||[]).map(ref=>archive.find(ref.url,ref.ts)).find(entry=>entry?.method!=='HEAD'&&entry?.mime.startsWith('image/')&&entry.status>=200&&entry.status<300);
+  if(!source){const {deriveView}=await import('../archive/views');const view=await deriveView('gallerydl',{archive,capture,url:capture.finalUrl||capture.url,signal});if(view.presentation?.type==='gallery')source=view.presentation.images[0]?.entry;}
   await mountReplay(archive);signal?.throwIfAborted();
   const template=document.createElement('template');template.innerHTML=cardTemplate;
   const card=template.content.firstElementChild as HTMLElement;

@@ -1,3 +1,4 @@
+import {evidenceView} from './evidence-views';
 import type { ArchiveEntry, ArchiveReader } from './reader';
 import type {GalleryPresentation} from '../../abx-plugins/abx_plugins/plugins/gallerydl/browser/view';
 import type {ForumPresentation} from '../../abx-plugins/abx_plugins/plugins/forumdl/browser/view';
@@ -19,7 +20,7 @@ export type ViewResult = { title: string; summary: string; sections: ViewSection
 export type ViewContext = { archive: ArchiveReader; url: string; capture?: Capture; signal?:AbortSignal; preview?:boolean };
 export type ViewModule = { default: (ctx: ViewContext) => Promise<ViewResult> };
 const modules = import.meta.glob('../../abx-plugins/abx_plugins/plugins/*/browser/view.ts');
-export const views = Object.fromEntries(Object.entries(modules).map(([path, load]) => [path.split('/').at(-3)!, async (context: ViewContext) => (await load() as ViewModule).default(context)]));
+export const views = Object.fromEntries(Object.entries(modules).map(([path, load]) => [path.split('/').at(-3)!, async (context: ViewContext) => await evidenceView(path.split('/').at(-3)!,context) ?? (await load() as ViewModule).default(context)]));
 
 type Derivation = {controller:AbortController; promise:Promise<ViewResult>; consumers:number; settled:boolean};
 const derivations = new WeakMap<ArchiveReader,Map<string,Derivation>>();

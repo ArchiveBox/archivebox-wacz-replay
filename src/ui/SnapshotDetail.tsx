@@ -74,7 +74,7 @@ export function PluginOutput({
     new URLSearchParams(location.hash.slice(1)).get("files") === "1";
   const [folderOpen, setFiles] = React.useState(folder);
   const stored =
-    !archive.isWACZ ||
+    (!archive.isWACZ && !archive.isWARC) ||
     archive.records.some(
       (record) =>
         record.type === "ArchiveResult" &&
@@ -113,7 +113,7 @@ export function PluginOutput({
     const controller = new AbortController();
     setView(undefined);
     setError("");
-    if (!files && name !== "archivewebpage")
+    if (!files && name !== "archivewebpage" && name !== "files")
       void deriveView(name, {
         archive,
         url,
@@ -140,7 +140,9 @@ export function PluginOutput({
       data-plugin={name}
       hidden={!active}
     >
-      {stored ? (
+      {name === "files" ? (
+        <ArchiveFiles archive={archive} />
+      ) : stored ? (
         <ArchiveFiles archive={archive} plugin={name} />
       ) : files ? (
         <PluginFiles archive={archive} capture={capture} name={name} />
@@ -174,12 +176,15 @@ export function PluginOutput({
 export function SnapshotDetail({
   archive,
   capture,
+  children,
   ...headerProps
-}: Omit<SnapshotHeaderProps, "expanded" | "onToggleOutputs">) {
+}: Omit<SnapshotHeaderProps, "expanded" | "onToggleOutputs"> & {
+  children?: React.ReactNode;
+}) {
   const [expanded, setExpanded] = React.useState(true);
   const candidates = React.useMemo(
-    () =>
-      !archive.isWACZ
+    () => [
+      ...(!archive.isWACZ && !archive.isWARC
         ? capture.plugins
         : [
             ...new Set([
@@ -190,10 +195,11 @@ export function SnapshotDetail({
             ]),
           ].filter(
             (name) =>
-              (!capture.plugins.length || capture.plugins.includes(name)) &&
-              (!["dom", "singlefile"].includes(name) ||
-                Boolean(archive.documentEntry())),
-          ),
+              !["dom", "singlefile"].includes(name) ||
+              Boolean(archive.documentEntry()),
+          )),
+      ...(archive.members.length ? ["files"] : []),
+    ],
     [archive, capture],
   );
   const checks = React.useMemo(
@@ -201,9 +207,11 @@ export function SnapshotDetail({
       new Map(
         candidates.map((name) => [
           name,
-          capture.hooks.some(
-            (hook) => hook.plugin === name && hook.records?.length,
-          )
+          (!archive.isWACZ && !archive.isWARC) ||
+          (!views[name] &&
+            capture.hooks.some(
+              (hook) => hook.plugin === name && hook.records?.length,
+            ))
             ? true
             : hasOutput(name, {
                 archive,
@@ -223,15 +231,22 @@ export function SnapshotDetail({
     const pending = [...checks].filter(
       ([, value]) => typeof value !== "boolean",
     );
-    if (pending.length)
-      void Promise.all(
-        pending.map(
-          async ([name, value]) =>
-            [name, await Promise.resolve(value).catch(() => true)] as const,
-        ),
-      ).then((values) => {
-        if (active) setResolved({ checks, values: new Map(values) });
-      });
+    for (const [name, value] of pending)
+      void Promise.resolve(value)
+        .catch((error) => {
+          console.error(`Unable to derive ${name}`, error);
+          return true;
+        })
+        .then((value) => {
+          if (active)
+            setResolved((previous) => ({
+              checks,
+              values: new Map([
+                ...(previous?.checks === checks ? previous.values : []),
+                [name, value],
+              ]),
+            }));
+        });
     return () => {
       active = false;
     };
@@ -257,7 +272,11 @@ export function SnapshotDetail({
   const names = React.useMemo(
     () =>
       orderedPlugins(
-        available.filter((name) => !archive.isWACZ || Boolean(views[name])),
+        available.filter(
+          (name) =>
+            name !== "files" &&
+            ((!archive.isWACZ && !archive.isWARC) || Boolean(views[name])),
+        ),
       ),
     [available],
   );
@@ -269,8 +288,10 @@ export function SnapshotDetail({
           ? archive.artifact("screenshot") || archive.artifact("fullPage")
           : archive.artifact(name)),
     ) ||
-    names[0] ||
-    "responses";
+    (!archive.metadata && archive.documentEntry()
+      ? "archivewebpage"
+      : names[0]) ||
+    "files";
   const initial = () => {
     const requested = new URLSearchParams(location.hash.slice(1)).get("view");
     return requested &&
@@ -297,6 +318,7 @@ export function SnapshotDetail({
   }, []);
   const root = React.useRef<HTMLDivElement>(null);
   const cardsHost = React.useRef<HTMLDivElement>(null);
+  const expandedStack = React.useRef<string | undefined>(undefined);
   React.useLayoutEffect(() => {
     const header = root.current!.querySelector("header")!;
     const resize = () =>
@@ -406,9 +428,14 @@ export function SnapshotDetail({
       frame.loading = "lazy";
       frame.tabIndex = -1;
       const screenshot =
-        name === "screenshot" ? archive.artifact("screenshot") : undefined;
+        name === "screenshot"
+          ? archive.artifact("screenshot") ||
+            archive.entries.find((entry) =>
+              entry.url.startsWith("urn:fullPage:"),
+            )
+          : undefined;
       const template = cardTemplate(name) || "";
-      if (!archive.isWACZ) {
+      if (!archive.isWACZ && !archive.isWARC) {
         thumbnail.append(overlay);
         const label = document.createElement("p");
         label.textContent =
@@ -475,7 +502,32 @@ export function SnapshotDetail({
         });
       } else if (screenshot) {
         const image = document.createElement("img");
-        image.src = recordURL(archive, screenshot);
+        const tiles = archive.entries.filter((entry) =>
+          entry.url.startsWith("urn:fullPage:"),
+        );
+        void Promise.all(
+          (tiles.length ? tiles : [screenshot]).map(async (entry) => {
+            const { warcHeaders } = await archive.headers(entry);
+            const metadata = JSON.parse(
+              warcHeaders["WARC-JSON-Metadata"] || "{}",
+            );
+            return { entry, index: metadata.screenshot?.tile?.index || 0 };
+          }),
+        ).then((entries) => {
+          if (!controller.signal.aborted) {
+            const src = recordURL(
+              archive,
+              entries.sort((a, b) => a.index - b.index)[0]!.entry,
+            );
+            image.src = src;
+            container
+              .querySelectorAll<HTMLImageElement>(
+                "img[data-screenshot-preview]",
+              )
+              .forEach((image) => (image.src = src));
+          }
+        });
+        image.dataset.screenshotPreview = "true";
         image.alt = "Screenshot of page";
         image.loading = "lazy";
         image.decoding = "async";
@@ -523,6 +575,14 @@ export function SnapshotDetail({
       a.dataset.pluginView = name;
       other.querySelector(".loose-items")!.append(a);
     }
+    if (archive.members.length) {
+      const link = document.createElement("a");
+      link.href = "#view=files";
+      link.dataset.noPreview = "1";
+      link.dataset.pluginView = "files";
+      link.textContent = "📁 Archive files";
+      other.querySelector(".loose-items")!.append(link);
+    }
     if (other.querySelector(".loose-items")!.children.length)
       grid.append(other);
     const activate = (card: HTMLElement) => {
@@ -548,7 +608,15 @@ export function SnapshotDetail({
       (card) => card.dataset.pluginName === initial(),
     );
     selected?.classList.add("selected-card");
+    if (expandedStack.current)
+      container
+        .querySelector<HTMLButtonElement>(`.${expandedStack.current}`)
+        ?.click();
     return () => {
+      expandedStack.current = [
+        ...(container.querySelector('.output-stack[aria-expanded="true"]')
+          ?.classList || []),
+      ].find((name) => name.startsWith("output-stack-"));
       controller.abort();
       disposePreviews();
       dispose?.();
@@ -586,7 +654,11 @@ export function SnapshotDetail({
           id="snapshot-output-browser"
           aria-busy={
             [...checks.values()].some((value) => typeof value !== "boolean") &&
-            resolved?.checks !== checks
+            (resolved?.checks !== checks ||
+              resolved.values.size <
+                [...checks.values()].filter(
+                  (value) => typeof value !== "boolean",
+                ).length)
           }
           hidden={!expanded}
           ref={cardsHost}
@@ -607,6 +679,7 @@ export function SnapshotDetail({
         <summary>Archive results</summary>
         <CaptureActivity capture={capture} />
       </details>
+      {children}
     </div>
   );
 }

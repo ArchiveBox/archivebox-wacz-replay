@@ -10,8 +10,6 @@ import {
 import { captureInfo } from "../src/archive/capture-info";
 import { SnapshotDetail } from "../src/ui/SnapshotDetail";
 import { EmbeddedOutput } from "../src/ui/EmbeddedOutput";
-import { ArchiveFiles } from "../src/ui/ArchiveFiles";
-import { ReplayWebPage } from "../src/ui/ReplayWebPage";
 import { replayCommand } from "../src/replay/client";
 import replayWorkerURL from "./sw.ts?worker&url";
 import "../src/ui/player.css";
@@ -89,9 +87,7 @@ function App() {
   const [source, setSource] = React.useState(
     new URLSearchParams(location.search).get("source") || "",
   );
-  const [tab, setTab] = React.useState("snapshot"),
-    [pageIndex, setPageIndex] = React.useState(0),
-    [integrity, setIntegrity] = React.useState("");
+  const [integrity, setIntegrity] = React.useState("");
   const input = React.useRef<HTMLInputElement>(null);
   const [filename, setFilename] = React.useState(
     new URLSearchParams(location.search).get("name") || "capture.wacz",
@@ -103,17 +99,9 @@ function App() {
   const show = (reader: ArchiveReader, name?: string) => {
     if (name) setFilename(name);
     setArchive(reader);
-    setTab(
-      reader.isWARC
-        ? "replay"
-        : reader.isWACZ || reader.metadata
-          ? "snapshot"
-          : "files",
-    );
-    setPageIndex(0);
     setIntegrity("");
     document.title =
-      (reader.metadata?.title || reader.manifest.title || "Archive") +
+      (reader.metadata?.title || reader.pages[0]?.title || reader.manifest.title || name || "Archive") +
       " · ArchiveBox Replay";
   };
   async function openURL(url: string) {
@@ -199,40 +187,33 @@ function App() {
         if (file) void importFile(file);
       }}
     >
-      <header className="player-masthead">
-        <div className="brand">
-          <Archive size={27} />
-          <div>
-            ArchiveBox Replay<span>STANDALONE ARCHIVE VIEWER</span>
+      {!archive && (
+        <header className="player-masthead">
+          <div className="brand">
+            <Archive size={27} />
+            <div>
+              ArchiveBox<span>SNAPSHOT DETAIL</span>
+            </div>
           </div>
-        </div>
-        <div>
-          <button disabled={loading} onClick={() => input.current?.click()}>
-            <FileUp size={16} />
-            Open archive file
-          </button>
-          {archive && (
-            <button
-              onClick={() =>
-                void close().catch((reason) => setError(String(reason)))
-              }
-            >
-              Close archive
+          <div>
+            <button disabled={loading} onClick={() => input.current?.click()}>
+              <FileUp size={16} />
+              Open archive file
             </button>
-          )}
-        </div>
-        <input
-          ref={input}
-          hidden
-          type="file"
-          accept=".wacz,.warc,.warc.gz,.zip"
-          onChange={(event) => {
-            const file = event.target.files?.[0];
-            if (file) void importFile(file);
-            event.target.value = "";
-          }}
-        />
-      </header>
+          </div>
+        </header>
+      )}
+      <input
+        ref={input}
+        hidden
+        type="file"
+        accept=".wacz,.warc,.warc.gz,.zip"
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) void importFile(file);
+          event.target.value = "";
+        }}
+      />
       {!archive && !loading && (
         <main className="open-archive">
           <h1>Your archive, ready to explore.</h1>
@@ -274,130 +255,82 @@ function App() {
       )}
       {archive && capture && (
         <>
-          <nav className="viewer-tabs" aria-label="Archive views">
-            {[
-              ...(archive.isWACZ || archive.metadata ? ["snapshot"] : []),
-              ...(archive.isWACZ || archive.isWARC ? ["replay"] : []),
-              ...(!archive.isWARC ? ["files"] : []),
-              "metadata",
-              ...(archive.isWACZ ? ["integrity"] : []),
-            ].map((name) => (
-              <button
-                key={name}
-                aria-pressed={tab === name}
-                onClick={() => setTab(name)}
-              >
-                {name === "files"
-                  ? "Files (" + archive.members.length + ")"
-                  : name[0]!.toUpperCase() + name.slice(1)}
-              </button>
-            ))}
-            <button onClick={() => void download()}>Download original</button>
-          </nav>
           {archive.warnings.length > 0 && (
             <details className="archive-notices">
               <summary>Metadata notices ({archive.warnings.length})</summary>
               <pre>{archive.warnings.join("\n")}</pre>
             </details>
           )}
-          {tab === "snapshot" && (
-            <SnapshotDetail
-              key={capture.id}
-              archive={archive}
-              capture={capture}
-              onDownload={download}
-              onIndex={() => void close()}
-            />
-          )}
-          {tab === "replay" && (
-            <section>
-              <label className="page-picker">
-                Saved page{" "}
-                <select
-                  aria-label="Saved page"
-                  value={pageIndex}
-                  onChange={(event) => setPageIndex(Number(event.target.value))}
-                >
-                  {archive.pages.map((page, index) => (
-                    <option key={index} value={index}>
-                      {page.title || page.url} — {page.ts}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {archive.pages[pageIndex] ? (
-                <ReplayWebPage
-                  archive={archive}
-                  url={archive.pages[pageIndex].url}
-                  ts={archive.pages[pageIndex].ts.replace(/[^0-9]/g, "")}
-                />
-              ) : (
+
+          <SnapshotDetail
+            key={capture.id}
+            archive={archive}
+            capture={capture}
+            onDownload={download}
+            onIndex={() => void close()}
+          >
+            <details className="capture-diagnostics">
+              <summary>Archive metadata</summary>
+              <section className="view-section">
                 <p>
-                  No pages index is available; use Files or the snapshot
-                  response browser.
+                  {archive.records.length} JSONL records ·{" "}
+                  {archive.entries.length} indexed resources
                 </p>
-              )}
-            </section>
-          )}
-          {tab === "files" && <ArchiveFiles archive={archive} />}
-          {tab === "metadata" && (
-            <section className="view-section">
-              <h2>Archive metadata</h2>
-              <p>
-                {archive.records.length} JSONL records ·{" "}
-                {archive.entries.length} indexed resources
-              </p>
-              {!archive.isWARC && (
-                <details open>
-                  <summary>index.jsonl records</summary>
-                  <pre>
-                    {archive.records
-                      .map((record) => JSON.stringify(record, null, 2))
-                      .join("\n")}
-                  </pre>
+                {!archive.isWARC && (
+                  <details open>
+                    <summary>index.jsonl records</summary>
+                    <pre>
+                      {archive.records
+                        .map((record) => JSON.stringify(record, null, 2))
+                        .join("\n")}
+                    </pre>
+                  </details>
+                )}
+                <details open={archive.isWARC}>
+                  <summary>Indexed resources</summary>
+                  <pre>{JSON.stringify(archive.entries, null, 2)}</pre>
                 </details>
-              )}
-              <details open={archive.isWARC}>
-                <summary>Indexed resources</summary>
-                <pre>{JSON.stringify(archive.entries, null, 2)}</pre>
+                {!archive.isWARC && (
+                  <details>
+                    <summary>datapackage.json</summary>
+                    <pre>{JSON.stringify(archive.manifest, null, 2)}</pre>
+                  </details>
+                )}
+              </section>
+            </details>
+            {archive.isWACZ && (
+              <details className="capture-diagnostics">
+                <summary>Package integrity</summary>
+                <section className="view-section">
+                  <h2>Package integrity</h2>
+                  <button
+                    disabled={integrity === "Checking…"}
+                    onClick={() => {
+                      setIntegrity("Checking…");
+                      void archive
+                        .verifyPackage()
+                        .then((checks) =>
+                          setIntegrity(
+                            checks
+                              .map(
+                                (check) =>
+                                  (check.valid ? "PASS" : "FAIL") +
+                                  " " +
+                                  check.path,
+                              )
+                              .join("\n"),
+                          ),
+                        )
+                        .catch((reason) => setIntegrity(String(reason)));
+                    }}
+                  >
+                    Verify hashes
+                  </button>
+                  <pre role="status">{integrity}</pre>
+                </section>
               </details>
-              {!archive.isWARC && (
-                <details>
-                  <summary>datapackage.json</summary>
-                  <pre>{JSON.stringify(archive.manifest, null, 2)}</pre>
-                </details>
-              )}
-            </section>
-          )}
-          {tab === "integrity" && (
-            <section className="view-section">
-              <h2>Package integrity</h2>
-              <button
-                disabled={integrity === "Checking…"}
-                onClick={() => {
-                  setIntegrity("Checking…");
-                  void archive
-                    .verifyPackage()
-                    .then((checks) =>
-                      setIntegrity(
-                        checks
-                          .map(
-                            (check) =>
-                              (check.valid ? "PASS" : "FAIL") +
-                              " " +
-                              check.path,
-                          )
-                          .join("\n"),
-                      ),
-                    )
-                    .catch((reason) => setIntegrity(String(reason)));
-                }}
-              >
-                Verify hashes
-              </button>
-              <pre role="status">{integrity}</pre>
-            </section>
-          )}
+            )}
+          </SnapshotDetail>
         </>
       )}
     </div>

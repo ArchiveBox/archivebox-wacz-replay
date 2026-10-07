@@ -7,15 +7,17 @@ const sha256=async(value:string)=>[...new Uint8Array(await crypto.subtle.digest(
 export async function integrityTree(archive:ArchiveReader,{includeRecords=true}:{includeRecords?:boolean}={}){
   // WACZ package members are the actual files in this archive. Their manifest
   // hashes refer to these exact bytes, not invented exported plugin paths.
-  const files=archive.manifest.resources.map((resource:any)=>({path:resource.path,hash:String(resource.hash).replace(/^sha-?256:/,''),size:resource.bytes})).sort((a:any,b:any)=>a.path.localeCompare(b.path));
+  const files=archive.isWARC ? [{path:'archive.'+archive.manifest.format,hash:await archive.sourceDigest(),size:archive.size}] : (archive.manifest.resources || []).map((resource:any)=>({path:resource.path,hash:String(resource.hash).replace(/^sha-?256:/,''),size:resource.bytes})).sort((a:any,b:any)=>a.path.localeCompare(b.path));
   // CDX payload digests expose every original response/evidence body without
   // decompressing whole WARC members merely to draw a thumbnail.
   const warc_records:Record<string,{files:unknown[];root_hash:string;tree_levels:string[][]}>={};
   for(const file of includeRecords?files:[]){
-    const records=archive.entries.filter(entry=>!entry.native&&(entry.filename.startsWith('archive/')?entry.filename:`archive/${entry.filename}`)===file.path).map(entry=>{
+    const records=await Promise.all(archive.entries.filter(entry=>!entry.native&&(archive.isWARC||(entry.filename.startsWith('archive/')?entry.filename:`archive/${entry.filename}`)===file.path)).map(async entry=>{
+      const digest=await archive.recordedDigest(entry);
       const url=new URL(entry.url),parts=url.protocol==='urn:'?[entry.url.split(':')[1]!,entry.url]:[url.host,...url.pathname.split('/').filter(Boolean),url.search||''];
-      return {path:parts.filter(Boolean).map(part=>encodeURIComponent(part)).join('/')+`/${entry.timestamp}-${entry.offset}`,url:entry.url,timestamp:entry.timestamp,offset:entry.offset,stored_bytes:entry.length,hash:entry.digest.replace(/^sha-?256:/,''),algorithm:entry.digest.split(':')[0],size:null};
-    }).sort((a,b)=>a.path.localeCompare(b.path));
+      return {path:parts.filter(Boolean).map(part=>encodeURIComponent(part)).join('/')+`/${entry.timestamp}-${entry.offset}`,url:entry.url,timestamp:entry.timestamp,offset:entry.offset,stored_bytes:entry.length,hash:digest,algorithm:digest.split(':')[0],size:null};
+    }));
+    records.sort((a,b)=>a.path.localeCompare(b.path));
     if(!records.length)continue;
     const levels=[records.map(record=>record.hash)];
     while(levels.at(-1)!.length>1){const level=levels.at(-1)!,next:string[]=[];for(let i=0;i<level.length;i+=2)next.push(await sha256(level[i]!+(level[i+1]||level[i])));levels.push(next)}

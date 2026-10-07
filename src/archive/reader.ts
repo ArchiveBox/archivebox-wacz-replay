@@ -64,6 +64,9 @@ export class ArchiveReader {
     ReturnType<ArchiveReader["readHeaders"]>
   >();
   private exchangeReads = new Map<string, Promise<ArchivedExchange>>();
+  private requestLocations?: Promise<
+    Map<string, { offset: number; length: number }>
+  >;
   private smallBodies = new Map<string, Uint8Array>();
   private smallBodyBytes = 0;
   private constructor(
@@ -263,11 +266,20 @@ export class ArchiveReader {
               /^(text\/html|application\/xhtml\+xml)/i.test(entry.mime) &&
               entry.status === 200,
           )
+          .sort((a, b) => a.ts - b.ts || a.offset - b.offset)
           .map((entry) => ({
             url: entry.url,
             ts: new Date(entry.ts).toISOString(),
           })),
       );
+    if (
+      archive.captureId &&
+      typeof document !== "undefined" &&
+      archive.pages[0] &&
+      !archive.pages[0].title &&
+      archive.documentEntry()
+    )
+      archive.pages[0].title = (await archive.sourceDOM()).title;
   }
   find(url: string, ts?: number) {
     // HTTP fragments identify locations within a response, while evidence URNs
@@ -300,8 +312,19 @@ export class ArchiveReader {
     const filename = entry.filename.startsWith("archive/")
       ? entry.filename
       : `archive/${entry.filename}`;
-    const load = (offset: number, length: number) =>
-      this.zip.loadFile(filename, { offset, length });
+    const load = async (offset: number, length: number) =>
+      this.isWARC
+        ? {
+            reader: {
+              readFully: async () =>
+                (await this.loader.getRange(
+                  offset,
+                  length,
+                  false,
+                )) as Uint8Array,
+            },
+          }
+        : this.zip.loadFile(filename, { offset, length });
     const response = await new WARCParser(
       warcRanges(load, entry.offset, entry.length),
     ).parse();
@@ -316,14 +339,63 @@ export class ArchiveReader {
       requestBody: null,
       metadata: JSON.parse(response.warcHeader("WARC-JSON-Metadata") || "{}"),
     };
+    // wget/wpull store requests before responses, sometimes interleaved. Pair
+    // their actual record IDs rather than assuming adjacency or URL alone.
+    const concurrent = response.warcHeader("WARC-Concurrent-To");
+    if (this.isWARC && concurrent) {
+      if (!this.requestLocations)
+        this.requestLocations = (async () => {
+          const locations = new Map<
+            string,
+            { offset: number; length: number }
+          >();
+          const parser = new WARCParser(
+            (await this.loader.getRange(
+              0,
+              this.size,
+              true,
+            )) as ReadableStream<Uint8Array>,
+          );
+          for await (const record of parser) {
+            const offset = parser.offset;
+            await record.skipFully();
+            if (record.warcType === "request")
+              locations.set(record.warcHeader("WARC-Record-ID")!, {
+                offset,
+                length: parser.recordLength,
+              });
+          }
+          return locations;
+        })();
+      const location = (await this.requestLocations).get(concurrent);
+      if (location) {
+        const request = await new WARCParser(
+          warcRanges(load, location.offset, location.length),
+        ).parse();
+        if (
+          request?.warcType === "request" &&
+          request.warcTargetURI === response.warcTargetURI
+        ) {
+          result.method = request.httpHeaders?.method || result.method;
+          result.requestHeaders = Object.fromEntries(
+            request.httpHeaders?.headers || [],
+          );
+          result.requestBody = await request.readFully();
+          return result;
+        }
+      }
+    }
     const offset = entry.offset + entry.length;
     const next = this.entries
       .filter(
         (item) => item.filename === entry.filename && item.offset >= offset,
       )
       .sort((a, b) => a.offset - b.offset)[0];
-    const files = await this.zip.load();
-    const end = next?.offset ?? files[filename]?.uncompressedSize;
+    const end =
+      next?.offset ??
+      (this.isWARC
+        ? this.size
+        : (await this.zip.load())[filename]?.uncompressedSize);
     if (end === undefined || end <= offset) return result;
     const request = await new WARCParser(
       warcRanges(load, offset, end - offset),
@@ -495,6 +567,23 @@ export class ArchiveReader {
   async dom(): Promise<Document> {
     const { renderedDOM } = await import("./rendered-dom");
     return renderedDOM(this);
+  }
+  private sourceHash?: Promise<string>;
+  sourceDigest() {
+    return this.sourceHash ||= (async () => {
+      const hash = await createSHA256(); hash.init();
+      const stream = await this.loader.getRange(0,this.size,true) as ReadableStream<Uint8Array>;
+      const reader = stream.getReader();
+      try { while(true){const {done,value}=await reader.read();if(done)break;hash.update(value);} }
+      finally {reader.releaseLock();}
+      return hash.digest('hex');
+    })();
+  }
+  async recordedDigest(entry:ArchiveEntry) {
+    if(!this.isWARC)return entry.digest;
+    const bytes=await this.loader.getRange(entry.offset,entry.length,false) as Uint8Array;
+    const record=await new WARCParser([bytes]).parse();
+    return record?.warcHeader('WARC-Payload-Digest') || '';
   }
   integrityTree(options?: { includeRecords?: boolean }) {
     return integrityTree(this, options);

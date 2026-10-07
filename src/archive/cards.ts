@@ -8,7 +8,7 @@ const documents=new WeakMap<ArchiveReader,Promise<Document>>();
 /** Shared, inert, read-only source for summaries. Never mutate this document. */
 export function cardDOM(archive:ArchiveReader){
  let pending=documents.get(archive);
- if(!pending){pending=archive.sourceDOM();documents.set(archive,pending);pending.catch(()=>documents.delete(archive))}
+ if(!pending){pending=archive.dom();documents.set(archive,pending);pending.catch(()=>documents.delete(archive))}
  return pending;
 }
 export function cardDocument(template:string){

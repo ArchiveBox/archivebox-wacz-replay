@@ -119,7 +119,7 @@ export function SnapshotHeader({archive,capture,captures=[],onSelectCapture,onDo
               <a className="header-url-action" href={`https://web.archive.org/web/${url}`} target="_blank" rel="noreferrer" aria-label="Search Archive.org" title="Search for this URL in Archive.org">
                 <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m2 6 8-4 8 4H2Zm0 12h16M3 15h14M4 8v5m4-5v5m4-5v5m4-5v5"/></svg>
               </a>
-              {onDownload&&<button type="button" className="header-url-action header-url-download" aria-label="Download WACZ" title="Download the entire capture as WACZ" onClick={()=>void onDownload()}>
+              {onDownload&&<button type="button" className="header-url-action header-url-download" aria-label="Download original" title="Download the original archive" onClick={()=>void onDownload()}>
                 <span className="header-status" title="Snapshot hook outcomes">
                   {(succeeded>0||failed>0)&&<><span className="status-count status-count-success" title={`${succeeded} succeeded`}>{succeeded}</span>{failed>0&&<span className="status-count status-count-failed" title={`${failed} failed`}>{failed}</span>}</>}
                 </span>

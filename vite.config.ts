@@ -7,6 +7,9 @@ const root = fileURLToPath(new URL(".", import.meta.url));
 export default defineConfig({
   root: root + "player",
   base: "./",
+  // Opaque WASM/Python sandboxes fetch public bundled modules with Origin: null.
+  server: { cors: true },
+  preview: { cors: true },
   publicDir: false,
   resolve: {
     alias: {

@@ -1,4 +1,5 @@
 import type {ArchiveEntry,ArchiveReader} from '../archive/reader';
+import {deriveView} from '../archive/views';
 import type {Capture} from '../capture/types';
 import type {DocumentSource} from '../../abx-plugins/abx_plugins/plugins/liteparse/browser/view';
 import {mountReplay,recordURL} from '../archive/replay';
@@ -43,8 +44,7 @@ function parsed(archive:ArchiveReader,capture:Capture) {
   let promise=parsedCache.get(archive);
   if(!promise){promise=(async()=>{
     // The canonical card reads the same saved results as the full view.
-    const {default:view}=await import('../../abx-plugins/abx_plugins/plugins/liteparse/browser/view');
-    const result=await view({archive,capture,url:capture.finalUrl||capture.url});
+    const result=await deriveView('liteparse',{archive,capture,url:capture.finalUrl||capture.url});
     const documents:Parsed[]=[];
     for(const source of result.presentation?.type==='documents'?result.presentation.documents.slice(0,9):[]){
       const {entry,name,mime,size,digest,original}=source;
@@ -108,6 +108,7 @@ export async function createResourceCardPreview({archive,capture,plugin,signal,o
       const unsubscribe=document.source.subscribe(()=>{update();onUpdate?.(container)});
       signal?.addEventListener('abort',unsubscribe,{once:true});
       tile.append(original,text);grid.append(tile);
+      if(!document.source.peek() && signal)void document.source.load(signal).catch(error=>{if(!signal.aborted){text.textContent=String(error);onUpdate?.(container);}});
     }
     if(!documents.length)grid.textContent='No parsed files';
     return container;

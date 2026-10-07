@@ -1,3 +1,4 @@
+import {openSnapshotOutput} from "./helpers/snapshot-controls";
 import { test, expect } from "@playwright/test";
 import { readFile, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
@@ -21,17 +22,17 @@ for (const filename of ["iframetest.wacz", "archivebox-js.wacz"])
       .locator("input[type=file]")
       .setInputFiles(path.resolve("tests/fixtures", filename));
     await expect(
-      page.getByRole("navigation", { name: "Archive views" }),
+      page.locator(".stack-shelf"),
     ).toBeVisible();
     await expect(page.locator(".error[role=alert]")).toHaveCount(0);
-    await page.getByRole("button", { name: /^Files \(/ }).click();
+    await openSnapshotOutput(page, "files");
     await expect(
-      page.getByText("datapackage.json", { exact: true }),
+      page.getByRole("link", { name:"datapackage.json", exact: true }),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Metadata", exact: true }).click();
+    await page.getByText("Archive metadata", {exact:true}).click();
     if (filename === "archivebox-js.wacz")
-      await expect(page.locator("pre").first()).toContainText("ArchiveResult");
-    await page.getByRole("button", { name: "Replay", exact: true }).click();
+      await expect(page.locator("details").filter({has:page.locator("summary").filter({hasText:/^Archive metadata$/})}).locator("pre").first()).toContainText("ArchiveResult");
+    await openSnapshotOutput(page, "archivewebpage");
     await expect(
       page.getByLabel("ReplayWeb.page archive viewer").locator("iframe"),
     ).toHaveCount(1);
@@ -78,7 +79,7 @@ for (const filename of ["iframetest.wacz", "archivebox-js.wacz"])
         fullPage: true,
       });
     }
-    await page.getByRole("button", { name: "Integrity", exact: true }).click();
+    await page.locator("summary").filter({hasText:/^Package integrity$/}).click();
     await page.getByRole("button", { name: "Verify hashes" }).click();
     await expect(page.locator("pre[role=status]")).toContainText("PASS");
     await expect(page.locator("pre[role=status]")).not.toContainText("FAIL");
@@ -95,7 +96,7 @@ for (const filename of ["iframetest.wacz", "archivebox-js.wacz"])
     );
     await page.reload();
     await expect(
-      page.getByRole("navigation", { name: "Archive views" }),
+      page.locator(".stack-shelf"),
     ).toBeVisible();
     expect(errors).toEqual([]);
     expect(external).toEqual([]);
@@ -119,7 +120,7 @@ test("ZIP file browser previews, searches and exports original bytes", async ({
   await page.goto("/");
   await page.locator("input[type=file]").setInputFiles(input);
   await expect(
-    page.getByRole("button", { name: /^Files \(2\)/ }),
+    page.locator(".archive-files"),
   ).toBeVisible();
   await page.getByText("docs/", { exact: true }).click();
   await page.getByText("README.md", { exact: true }).click();
@@ -165,9 +166,9 @@ test("server JSONL ZIP displays stored plugin assets and all metadata", async ({
   await expect(page.locator(".header-title-text")).toHaveText(
     "Y Combinator | Hacker News",
   );
-  await page.getByRole("button", { name: "Metadata", exact: true }).click();
-  await expect(page.locator("pre").first()).toContainText("Process");
-  await page.getByRole("button", { name: /^Files/ }).click();
+  await page.getByText("Archive metadata", {exact:true}).click();
+  await expect(page.locator("details").filter({has:page.locator("summary").filter({hasText:/^Archive metadata$/})}).locator("pre").first()).toContainText("Process");
+  await openSnapshotOutput(page, "files");
   await page.getByText("singlefile/", { exact: true }).click();
   await page.getByText("singlefile.html", { exact: true }).click();
   await expect(
@@ -182,7 +183,7 @@ test("server JSONL ZIP displays stored plugin assets and all metadata", async ({
     path: info.outputPath("server-singlefile.png"),
     fullPage: true,
   });
-  await page.getByRole("button", { name: "Close archive" }).click();
+  await page.locator(".header-archivebox").click();
   await expect(
     page.getByRole("heading", { name: "Your archive, ready to explore." }),
   ).toBeVisible();
@@ -260,9 +261,9 @@ for (const filename of ["iframetest.wacz", "wget.warc", "grab-site.warc.gz"])
         .fill(`http://127.0.0.1:${address.port}/${filename}`);
       await page.getByRole("button", { name: "Open URL", exact: true }).click();
       await expect(
-        page.getByRole("navigation", { name: "Archive views" }),
+        page.locator(".stack-shelf"),
       ).toBeVisible();
-      await page.getByRole("button", { name: "Replay", exact: true }).click();
+      await openSnapshotOutput(page, "archivewebpage");
       await expect
         .poll(() => page.frames().some((frame) => frame.url().includes("mp_/")))
         .toBe(true);
@@ -423,9 +424,9 @@ test("static build runs under a subdirectory on an ordinary file server", async 
       .locator("input[type=file]")
       .setInputFiles(path.resolve("tests/fixtures/iframetest.wacz"));
     await expect(
-      page.getByRole("navigation", { name: "Archive views" }),
+      page.locator(".stack-shelf"),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Replay", exact: true }).click();
+    await openSnapshotOutput(page, "archivewebpage");
     await expect
       .poll(() =>
         page

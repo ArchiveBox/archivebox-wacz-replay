@@ -3,7 +3,7 @@ import {expect,type Page} from '@playwright/test';
 /** Use the canonical stack and card controls, never the thumbnail's inner UI. */
 export async function openSnapshotOutput(page:Page,plugin:string) {
   await expect(page.locator('.stack-shelf')).toBeVisible();
-  await expect(page.locator('#snapshot-output-browser')).toHaveAttribute('aria-busy','false');
+  // A usable output must remain interactive while other derivations are discovered.
   const card=page.locator(`.thumb-card[data-plugin-name=${JSON.stringify(plugin)}]`);
   if(await card.count()===0){
     const stack=page.locator('.output-stack-other');

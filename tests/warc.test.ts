@@ -1,3 +1,4 @@
+import {openSnapshotOutput} from "./helpers/snapshot-controls";
 import { test, expect } from "@playwright/test";
 import path from "node:path";
 import { readFile } from "node:fs/promises";
@@ -24,9 +25,9 @@ for (const filename of [
       .locator("input[type=file]")
       .setInputFiles(path.resolve("tests/fixtures", filename));
     await expect(
-      page.getByRole("navigation", { name: "Archive views" }),
+      page.locator(".stack-shelf"),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Replay", exact: true }).click();
+    await openSnapshotOutput(page, "archivewebpage");
     const replay = page
       .getByLabel("ReplayWeb.page archive viewer")
       .frameLocator("iframe");
@@ -61,7 +62,7 @@ for (const filename of [
     await expect(replay.locator("#script-result")).toHaveText(
       "Archived JavaScript executed",
     );
-    await page.getByRole("button", { name: "Metadata", exact: true }).click();
+    await page.getByText("Archive metadata", {exact:true}).click();
     await expect(page.getByText(/indexed resources/)).toHaveText(
       `0 JSONL records · ${filename.startsWith("wget") ? 10 : 6} indexed resources`,
     );
@@ -76,9 +77,9 @@ for (const filename of [
     );
     await page.reload();
     await expect(
-      page.getByRole("navigation", { name: "Archive views" }),
+      page.locator(".stack-shelf"),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Replay", exact: true }).click();
+    await openSnapshotOutput(page, "archivewebpage");
     await expect(
       replay.getByRole("heading", { name: "Archived crawler page" }),
     ).toBeVisible();
