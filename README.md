@@ -7,8 +7,8 @@
     <a href="#-get-started">Get started</a> ·
     <a href="#-explore-a-capture">Features</a> ·
     <a href="#-archive-compatibility">Compatibility</a> ·
-    <a href="#-host-it-anywhere">Hosting</a> ·
-    <a href="#-development">Development</a>
+    <a href="#hosting">Hosting</a> ·
+    <a href="#development">Development</a>
   </p>
   <p>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-blue" alt="License: AGPL-3.0-or-later" /></a>
@@ -128,6 +128,8 @@ dependencies and very large archives need further coverage. A single WARC can
 only replay resources available in that file. Crawlers may omit images inserted
 by JavaScript; the viewer cannot reconstruct responses that were never captured.
 
+<a id="hosting"></a>
+
 ## ☁️ Host it anywhere
 
 Deploy **`dist/`** to a static HTTPS host, including under a subdirectory.
@@ -152,6 +154,8 @@ https://your-viewer.example/?source=https%3A%2F%2Fyour-archives.example%2Fcaptur
 
 Use that viewer URL in an iframe to embed it. The archive host must also permit
 CORS and HTTP byte ranges; remote WACZ replay reads the required ranges on demand.
+
+<a id="development"></a>
 
 ## 🛠️ Development
 
