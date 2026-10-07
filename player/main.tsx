@@ -90,7 +90,7 @@ function App() {
     new URLSearchParams(location.search).get("source") || "",
   );
   const [tab, setTab] = React.useState("snapshot"),
-    [pageURL, setPageURL] = React.useState(""),
+    [pageIndex, setPageIndex] = React.useState(0),
     [integrity, setIntegrity] = React.useState("");
   const input = React.useRef<HTMLInputElement>(null);
   const [filename, setFilename] = React.useState(
@@ -103,8 +103,14 @@ function App() {
   const show = (reader: ArchiveReader, name?: string) => {
     if (name) setFilename(name);
     setArchive(reader);
-    setTab(reader.isWACZ || reader.metadata ? "snapshot" : "files");
-    setPageURL(reader.pages[0]?.url || "");
+    setTab(
+      reader.isWARC
+        ? "replay"
+        : reader.isWACZ || reader.metadata
+          ? "snapshot"
+          : "files",
+    );
+    setPageIndex(0);
     setIntegrity("");
     document.title =
       (reader.metadata?.title || reader.manifest.title || "Archive") +
@@ -219,7 +225,7 @@ function App() {
           ref={input}
           hidden
           type="file"
-          accept=".wacz,.zip"
+          accept=".wacz,.warc,.warc.gz,.zip"
           onChange={(event) => {
             const file = event.target.files?.[0];
             if (file) void importFile(file);
@@ -231,8 +237,8 @@ function App() {
         <main className="open-archive">
           <h1>Your archive, ready to explore.</h1>
           <p>
-            Drop a WACZ or ZIP here. Replay pages, inspect plugin outputs, and
-            browse every saved file.
+            Drop a WACZ, WARC, or ZIP here. Replay pages, inspect plugin
+            outputs, and browse every saved file.
           </p>
           <form
             onSubmit={(event) => {
@@ -271,8 +277,8 @@ function App() {
           <nav className="viewer-tabs" aria-label="Archive views">
             {[
               ...(archive.isWACZ || archive.metadata ? ["snapshot"] : []),
-              ...(archive.isWACZ ? ["replay"] : []),
-              "files",
+              ...(archive.isWACZ || archive.isWARC ? ["replay"] : []),
+              ...(!archive.isWARC ? ["files"] : []),
               "metadata",
               ...(archive.isWACZ ? ["integrity"] : []),
             ].map((name) => (
@@ -309,18 +315,22 @@ function App() {
                 Saved page{" "}
                 <select
                   aria-label="Saved page"
-                  value={pageURL}
-                  onChange={(event) => setPageURL(event.target.value)}
+                  value={pageIndex}
+                  onChange={(event) => setPageIndex(Number(event.target.value))}
                 >
                   {archive.pages.map((page, index) => (
-                    <option key={index} value={page.url}>
+                    <option key={index} value={index}>
                       {page.title || page.url} — {page.ts}
                     </option>
                   ))}
                 </select>
               </label>
-              {pageURL ? (
-                <ReplayWebPage archive={archive} url={pageURL} />
+              {archive.pages[pageIndex] ? (
+                <ReplayWebPage
+                  archive={archive}
+                  url={archive.pages[pageIndex].url}
+                  ts={archive.pages[pageIndex].ts.replace(/[^0-9]/g, "")}
+                />
               ) : (
                 <p>
                   No pages index is available; use Files or the snapshot
@@ -337,18 +347,26 @@ function App() {
                 {archive.records.length} JSONL records ·{" "}
                 {archive.entries.length} indexed resources
               </p>
-              <details open>
-                <summary>index.jsonl records</summary>
-                <pre>
-                  {archive.records
-                    .map((record) => JSON.stringify(record, null, 2))
-                    .join("\n")}
-                </pre>
+              {!archive.isWARC && (
+                <details open>
+                  <summary>index.jsonl records</summary>
+                  <pre>
+                    {archive.records
+                      .map((record) => JSON.stringify(record, null, 2))
+                      .join("\n")}
+                  </pre>
+                </details>
+              )}
+              <details open={archive.isWARC}>
+                <summary>Indexed resources</summary>
+                <pre>{JSON.stringify(archive.entries, null, 2)}</pre>
               </details>
-              <details>
-                <summary>datapackage.json</summary>
-                <pre>{JSON.stringify(archive.manifest, null, 2)}</pre>
-              </details>
+              {!archive.isWARC && (
+                <details>
+                  <summary>datapackage.json</summary>
+                  <pre>{JSON.stringify(archive.manifest, null, 2)}</pre>
+                </details>
+              )}
             </section>
           )}
           {tab === "integrity" && (

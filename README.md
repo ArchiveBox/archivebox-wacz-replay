@@ -1,6 +1,6 @@
 # ArchiveBox Replay
 
-A standalone, static web viewer for WACZ and ZIP archives. ArchiveBox's snapshot
+A standalone, static web viewer for WACZ, WARC, and ZIP archives. ArchiveBox's snapshot
 cards, output stacks, file browser, and offline plugin views surround Webrecorder's
 replay engine. No ArchiveBox server, browser extension, database service, or capture
 engine is required.
@@ -13,7 +13,7 @@ pnpm build
 pnpm preview --port 4178
 ```
 
-Open http://localhost:4178. Select or drop a `.wacz` or `.zip`, or open an HTTP(S)
+Open http://localhost:4178. Select or drop a `.wacz`, `.warc`, `.warc.gz`, or `.zip`, or open an HTTP(S)
 archive URL. Deploy the contents of `dist/` on any static HTTPS host, including
 under a subdirectory. Service workers require HTTPS or localhost; `file://` is not
 supported. Build before previewing: the replay service worker and WASM assets are
@@ -23,11 +23,12 @@ part of the production bundle.
 
 - **Snapshot:** ArchiveBox output stacks, screenshots, articles, documents, media,
   recorded responses, search, and the vendored plugin renderers.
-- **Replay:** Webrecorder replay and a saved-page selector for ordinary WACZ files,
+- **Replay:** Webrecorder replay and a saved-page selector for ordinary WACZ and WARC files,
   including archives without ArchiveBox metadata.
 - **Files:** Every ZIP member, directory navigation, filtering, sorting, individual
   downloads, folder ZIP downloads, and nested ZIP browsing.
 - **Metadata:** Original parsed `index.jsonl` records and the datapackage manifest.
+  Indexed response URLs, timestamps, MIME types and statuses are also available.
   Other JSONLs remain accessible in Files.
 - **Integrity:** On-demand verification of the WACZ resource and manifest hashes.
 - **Download original:** The original package bytes, unchanged.
@@ -48,6 +49,31 @@ Plugin derivations operate on recorded responses. Python/WASM, OCR, media and
 article libraries are bundled locally. Native browser **Print / Save as PDF**
 replaces extension-only automatic PDF generation. Accessibility trees can be
 shown when recorded; this website cannot ask Chrome's debugger to generate one.
+
+## Replay compatibility
+
+Real Chromium acceptance tests cover:
+
+| Producer | Tested output | Checks |
+| --- | --- | --- |
+| GNU wget 1.25.0 | WARC 1.0, plain and gzip | HTML, CSS, JS, image, iframe, navigation both directions, reload, original bytes |
+| grab-site 2.2.7 / wpull 3.0.9 | WARC 1.0, plain and gzip | Same offline crawler checks |
+| ArchiveWeb.page 0.15.1 | WACZ 1.1.1 | Main page, nested iframe, package hashes, reload, original bytes |
+| ArchiveBox JS | Complete sweeting.me WACZ captured 2026-10-05 | Replay text and image, plugin screenshot and derived SingleFile, JSONL, package hashes, reload, original bytes |
+
+Raw WARC inputs use Webrecorder's streaming CDX indexer and on-demand record
+reader; they are not converted to WACZ. HTML responses supply the saved-page list
+when the archive has no explicit pages index. WARC inputs show Replay, Metadata,
+and Download original; Files and package Integrity apply to ZIP/WACZ containers.
+Both local imports and remote HTTP range loading are tested. Crawler replay tests
+run after shutting down the original site, and local replay checks reject live
+network requests to original sites.
+
+These are compatibility fixtures, not exhaustive coverage of every producer
+version or capture. Multi-file crawl sets with cross-file revisit dependencies,
+very large archives, and every plugin renderer are not yet covered. A single WARC
+can only replay resources available in that file; missing crawl parts are not
+fetched from the original site.
 
 ## Develop and verify
 

@@ -25,8 +25,11 @@ type IndexBlock = {
   loaded: boolean;
 };
 interface PluginWACZStore extends ArchiveDB {
-  waczfiles: Record<string, unknown>;
-  waczNameForHash: Record<string, string>;
+  waczfiles?: Record<string, unknown>;
+  waczNameForHash?: Record<string, string>;
+  loadRecordFromSource?(
+    entry: RemoteResourceEntry,
+  ): Promise<{ remote: Awaited<ReturnType<SingleRecordWARCLoader["load"]>> }>;
   loadIndex(name: string): Promise<unknown>;
   doCDXLoad(key: string, block: IndexBlock, name: string): Promise<void>;
   loadFileFromNamedWACZ(
@@ -50,7 +53,7 @@ export class PluginReplay extends SWReplay {
     if (!files) {
       files = (async () => {
         const result: (PluginFile & { wacz: string })[] = [];
-        for (const wacz of Object.keys(store.waczfiles)) {
+        for (const wacz of Object.keys(store.waczfiles || {})) {
           const { reader } = await store.loadFileFromNamedWACZ(
             wacz,
             "datapackage.json",
@@ -114,7 +117,11 @@ export class PluginReplay extends SWReplay {
     return files;
   }
 
-  async mount(id: string, sourceUrl?: string): Promise<PluginWACZStore> {
+  async mount(
+    id: string,
+    sourceUrl?: string,
+    format = "wacz",
+  ): Promise<PluginWACZStore> {
     if (
       !/^(?:[a-f0-9]{32}|[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12})$/.test(id)
     )
@@ -133,15 +140,15 @@ export class PluginReplay extends SWReplay {
                 throw Error("A remote WACZ requires HTTP or HTTPS");
               file = {
                 sourceUrl: source.href,
-                name: source.pathname.split("/").at(-1) || `${id}.wacz`,
+                name: `${id}.${format}`,
                 noCache: true,
               };
             } else {
               const fileHandle = await archiveFileHandle(id);
               const blob = await fileHandle.getFile();
               file = {
-                sourceUrl: `file:///${id}.wacz`,
-                name: blob.name,
+                sourceUrl: `file:///${id}.${format}`,
+                name: `${id}.${format}`,
                 size: blob.size,
                 extra: { fileHandle },
                 noCache: true,
@@ -174,6 +181,7 @@ export class PluginReplay extends SWReplay {
     type: string;
     id: string;
     sourceUrl?: string;
+    format?: "warc" | "warc.gz";
     url?: string;
     ts?: number;
   }) {
@@ -182,13 +190,17 @@ export class PluginReplay extends SWReplay {
         await this.unmount(message.id);
         return { ok: true };
       case "inspect-wacz":
-        await this.mount(message.id, message.sourceUrl);
+        await this.mount(message.id, message.sourceUrl, message.format);
         return this.inspect(message.id);
       case "wacz-record":
         return this.metadata(message.id, message.url!, message.ts!);
       case "mount-wacz": {
-        const store = await this.mount(message.id, message.sourceUrl);
-        return { ok: true, hash: Object.keys(store.waczNameForHash)[0] };
+        const store = await this.mount(
+          message.id,
+          message.sourceUrl,
+          message.format,
+        );
+        return { ok: true, hash: Object.keys(store.waczNameForHash || {})[0] };
       }
       default:
         throw Error("Unknown replay operation");
@@ -208,7 +220,7 @@ export class PluginReplay extends SWReplay {
       this.indexed.set(
         id,
         (async () => {
-          for (const name of Object.keys(store.waczfiles))
+          for (const name of Object.keys(store.waczfiles || {}))
             await store.loadIndex(name);
           // Full reports ask for every indexed record. Ordinary replay retains upstream
           // lazy block lookup. Use the upstream IDX loader for compressed index members.
@@ -240,7 +252,7 @@ export class PluginReplay extends SWReplay {
     const native = await this.files(id, store);
     return {
       ok: true,
-      hash: Object.keys(store.waczNameForHash)[0],
+      hash: Object.keys(store.waczNameForHash || {})[0],
       pages: await store.getAllPages(),
       entries: [
         ...resources
@@ -301,16 +313,19 @@ export class PluginReplay extends SWReplay {
       };
     const { store, entry } = await this.record(id, url, ts);
     const { start, length, path, wacz } = entry.source;
-    const source = warcRanges(
-      (offset, length) =>
-        store.loadFileFromNamedWACZ(wacz!, `archive/${path}`, {
-          offset,
-          length,
-        }),
-      start,
-      length,
-    );
-    const remote = await new SingleRecordWARCLoader(source).load();
+    const remote = store.waczfiles
+      ? await new SingleRecordWARCLoader(
+          warcRanges(
+            (offset, length) =>
+              store.loadFileFromNamedWACZ(wacz!, `archive/${path}`, {
+                offset,
+                length,
+              }),
+            start,
+            length,
+          ),
+        ).load()
+      : (await store.loadRecordFromSource!(entry)).remote;
     if (!remote) throw Error("Archived record could not be read");
     // A small response's compressed member has already been read for its
     // headers. Keep its original bytes with that read instead of seeking and

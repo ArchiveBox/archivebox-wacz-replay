@@ -1,0 +1,557 @@
+WARC/1.0
+WARC-Type: warcinfo
+Content-Type: application/warc-fields
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-Record-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Filename: wget.warc.gz
+WARC-Block-Digest: sha1:QSWRF3HMNM6YEQ6PWWTCSV3TYPRNLWIM
+Content-Length: 357
+
+software: Wget/1.25.0 (darwin25.2.0)
+format: WARC File Format 1.0
+conformsTo: http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf
+robots: classic
+wget-arguments: "--recursive" "--level=2" "--page-requisites" "--warc-file=/tmp/abx-replay-wget-depth2/wget" "--directory-prefix=/tmp/abx-replay-wget-depth2/files" "http://127.0.0.1:8879/" 
+
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: <http://127.0.0.1:8879/>
+Content-Type: application/http;msgtype=request
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-Record-ID: <urn:uuid:A9BA5737-C757-4636-91A8-B5A11D279FF2>
+WARC-IP-Address: 127.0.0.1
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Block-Digest: sha1:2SGTLDKK4WJ65KWTMSLS2U7KE6YR3WHL
+Content-Length: 129
+
+GET / HTTP/1.1
+Host: 127.0.0.1:8879
+User-Agent: Wget/1.25.0
+Accept: */*
+Accept-Encoding: identity
+Connection: Keep-Alive
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Record-ID: <urn:uuid:310738E5-CD80-4F1F-8D4A-6442F011ED40>
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Concurrent-To: <urn:uuid:A9BA5737-C757-4636-91A8-B5A11D279FF2>
+WARC-Target-URI: <http://127.0.0.1:8879/>
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-IP-Address: 127.0.0.1
+WARC-Block-Digest: sha1:PT7SJHWZIKA23Z2XPNRCVRYXN26K6A3G
+WARC-Payload-Digest: sha1:JS72GY6U3CBAMQD2DLHHEL3XVOL46GYS
+Content-Type: application/http;msgtype=response
+Content-Length: 614
+
+HTTP/1.0 200 OK
+Server: SimpleHTTP/0.6 Python/3.8.20
+Date: Wed, 07 Oct 2026 05:46:09 GMT
+Content-type: text/html
+Content-Length: 428
+Last-Modified: Wed, 07 Oct 2026 05:41:48 GMT
+
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Archive replay acceptance</title><link rel="stylesheet" href="style.css"><script src="app.js" defer></script></head><body><h1>Archived crawler page</h1><img src="archive.png" alt="ArchiveBox logo"><p id="script-result">Script pending</p><a href="second.html">Visit saved second page</a><iframe src="second.html" title="Saved child frame"></iframe></body></html>
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: <http://127.0.0.1:8879/robots.txt>
+Content-Type: application/http;msgtype=request
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-Record-ID: <urn:uuid:EE7DF890-BE87-40E5-B07D-B265D37073F7>
+WARC-IP-Address: 127.0.0.1
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Block-Digest: sha1:N7PS6L7IL5UAJJJKWCKRGPI3RNQ7W5KF
+Content-Length: 139
+
+GET /robots.txt HTTP/1.1
+Host: 127.0.0.1:8879
+User-Agent: Wget/1.25.0
+Accept: */*
+Accept-Encoding: identity
+Connection: Keep-Alive
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Record-ID: <urn:uuid:94E91132-6CCE-49B5-9063-F9716FB8230B>
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Concurrent-To: <urn:uuid:EE7DF890-BE87-40E5-B07D-B265D37073F7>
+WARC-Target-URI: <http://127.0.0.1:8879/robots.txt>
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-IP-Address: 127.0.0.1
+WARC-Block-Digest: sha1:JC7ZKE2YVC3GSXZRIBO2CRXSJX4VRCF2
+WARC-Payload-Digest: sha1:MG77GYJP2KMR4GK7D5SVELSFA75GWRT7
+Content-Type: application/http;msgtype=response
+Content-Length: 654
+
+HTTP/1.0 404 File not found
+Server: SimpleHTTP/0.6 Python/3.8.20
+Date: Wed, 07 Oct 2026 05:46:09 GMT
+Connection: close
+Content-Type: text/html;charset=utf-8
+Content-Length: 469
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <title>Error response</title>
+    </head>
+    <body>
+        <h1>Error response</h1>
+        <p>Error code: 404</p>
+        <p>Message: File not found.</p>
+        <p>Error code explanation: HTTPStatus.NOT_FOUND - Nothing matches the given URI.</p>
+    </body>
+</html>
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: <http://127.0.0.1:8879/style.css>
+Content-Type: application/http;msgtype=request
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-Record-ID: <urn:uuid:F376FBC6-A03A-4FF3-ABD2-83C11FE16BBF>
+WARC-IP-Address: 127.0.0.1
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Block-Digest: sha1:JGZDGVWKOYME3CMSEQRRMNYSNT67N7T7
+Content-Length: 171
+
+GET /style.css HTTP/1.1
+Host: 127.0.0.1:8879
+Referer: http://127.0.0.1:8879/
+User-Agent: Wget/1.25.0
+Accept: */*
+Accept-Encoding: identity
+Connection: Keep-Alive
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Record-ID: <urn:uuid:7474738E-8CB8-4359-913A-C837B6D767DB>
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Concurrent-To: <urn:uuid:F376FBC6-A03A-4FF3-ABD2-83C11FE16BBF>
+WARC-Target-URI: <http://127.0.0.1:8879/style.css>
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-IP-Address: 127.0.0.1
+WARC-Block-Digest: sha1:P6TVW4GLYHQL6JLGPLH7QJEWVG4KX44O
+WARC-Payload-Digest: sha1:3DFFO5YI5LVDEWCYLSC5D6P3SB5EUA33
+Content-Type: application/http;msgtype=response
+Content-Length: 271
+
+HTTP/1.0 200 OK
+Server: SimpleHTTP/0.6 Python/3.8.20
+Date: Wed, 07 Oct 2026 05:46:09 GMT
+Content-type: text/css
+Content-Length: 87
+Last-Modified: Wed, 07 Oct 2026 05:41:48 GMT
+
+h1 { color: rgb(17, 85, 153); } img { width: 64px; } body { font-family: sans-serif; }
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: <http://127.0.0.1:8879/app.js>
+Content-Type: application/http;msgtype=request
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-Record-ID: <urn:uuid:5934E834-EA9C-4B52-B577-38106149F7E0>
+WARC-IP-Address: 127.0.0.1
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Block-Digest: sha1:NBMVMRIDNF4P32DY33CJVWBJJJOAFUOO
+Content-Length: 168
+
+GET /app.js HTTP/1.1
+Host: 127.0.0.1:8879
+Referer: http://127.0.0.1:8879/
+User-Agent: Wget/1.25.0
+Accept: */*
+Accept-Encoding: identity
+Connection: Keep-Alive
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Record-ID: <urn:uuid:4EFF58FD-AB43-4B9B-BD17-2863997DDA23>
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Concurrent-To: <urn:uuid:5934E834-EA9C-4B52-B577-38106149F7E0>
+WARC-Target-URI: <http://127.0.0.1:8879/app.js>
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-IP-Address: 127.0.0.1
+WARC-Block-Digest: sha1:DKB6MT6FWTSYAAJ5R3362UZBKEYKJ7S2
+WARC-Payload-Digest: sha1:S26BI22EQ23GVJ3ZX744RIBWQMFHMDOA
+Content-Type: application/http;msgtype=response
+Content-Length: 278
+
+HTTP/1.0 200 OK
+Server: SimpleHTTP/0.6 Python/3.8.20
+Date: Wed, 07 Oct 2026 05:46:09 GMT
+Content-type: text/javascript
+Content-Length: 87
+Last-Modified: Wed, 07 Oct 2026 05:41:48 GMT
+
+document.querySelector('#script-result').textContent = 'Archived JavaScript executed';
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: <http://127.0.0.1:8879/archive.png>
+Content-Type: application/http;msgtype=request
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-Record-ID: <urn:uuid:D65C885F-3C70-4F3D-B8B0-1E5621F67106>
+WARC-IP-Address: 127.0.0.1
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Block-Digest: sha1:JKY3CTVROFZWP4YS6ODXPJMX3M2ZGH26
+Content-Length: 173
+
+GET /archive.png HTTP/1.1
+Host: 127.0.0.1:8879
+Referer: http://127.0.0.1:8879/
+User-Agent: Wget/1.25.0
+Accept: */*
+Accept-Encoding: identity
+Connection: Keep-Alive
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Record-ID: <urn:uuid:86BF8409-9901-4A14-9BCD-131F70732EFA>
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Concurrent-To: <urn:uuid:D65C885F-3C70-4F3D-B8B0-1E5621F67106>
+WARC-Target-URI: <http://127.0.0.1:8879/archive.png>
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-IP-Address: 127.0.0.1
+WARC-Block-Digest: sha1:PTHLUZUQNF6AADIDXSHMLE4IQ2FDPMXE
+WARC-Payload-Digest: sha1:PPOGF57UA5E7OIKPJRXNH2JD5DVGIWI6
+Content-Type: application/http;msgtype=response
+Content-Length: 17918
+
+HTTP/1.0 200 OK
+Server: SimpleHTTP/0.6 Python/3.8.20
+Date: Wed, 07 Oct 2026 05:46:09 GMT
+Content-type: image/png
+Content-Length: 17730
+Last-Modified: Wed, 07 Oct 2026 05:41:48 GMT
+
+‰PNG
+
+   IHDR  4      ’Ìó  biTXtXML:com.adobe.xmp     <?xpacket begin="ï»¿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 6.0.0">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:tiff="http://ns.adobe.com/tiff/1.0/"
+   tiff:Orientation="1"/>
+ </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="r"?>".¨ç  	ıiCCPICC Profile  H‰•–wTT×ÆÏ½Óm†Ş†Ş{@`è]z•aèe„¡
+Ø`"Šˆ(‚†ª`TŠÅBPÀ‚$(1X ”w‘“•µŞzï[kßó[ûîµÏ¾çüq? HLV||,Ì@'‰ëioE÷¤ã~d ( ü,vb¼¥»»@ôuı§G:D÷4ÖzıûıhX" ÈaVh";á‹+³ã¹I!,—š0¼VOã""L[ãˆuV^ãuŞğ¥ÆÛÓa¤'Ìbq#  !yz
+;éCÌDX›ÅAøÂæìHV(Âs«ÇÅmC˜$²6CÈßúDü£gÈ_=Y¬ˆ¿xı[¾çÇâÆ…qÿÏÓø›üuµS'‡q|¼ÖV$$€`.ˆa€›––´Vd½-~;7*"2‰n‰ÜNİ‘ÃÖT§ëjë °v×ë­Ş}éÁßrÉL L3dõ·ÜäÚì‘#¾ı-'‡ìO¶  ã2;™›²C¯=0€xˆ) ”Ğ†À0-pnÀ€-€"‘‰¹ d‚= äƒà(à¨gÁyĞ
+:ÀUpÜ`<ã`
+¼ó`,C„ƒ(…¤!HÒ…9d¹@P E@(Ê„öByP!T
+UBuĞOĞ%è*t„BĞ,ôú£`2Lƒ%aEXfÀ–°3ìo†#à8Î†À%p|n¯Âwàax~	/  Š„BÉ 4P”5Êˆ
+GqQ;Q¹¨bTªÕêEİC£æPĞX4MGk MÑh4€Ş‰ÎG—¢kÑ-èô=ôzıCÁH`Ô0&GŒ?&“ŠÉÁcª1Í˜ë˜aÌf‹Å
+a•°FXl 6›ÍÇÇ6a»°ƒØIì‡Å©áÌpn8.	—ƒ;†;ƒ»‚ÂMáŞãIxi¼.Şˆçà³ğÅøz|'~?_&ğ&7B(a;¡€pšĞN¸K˜",ù‰JD3¢71š¸‡XBl$^'ß’H$Y’1ÉƒEÚM*!#İ$M>Èªdkr9™|€\Cî"?$¿¥P(Š&%’D9@©£\£<¥¼ç¡òhò8ò„òìâ)ãiáâyÅKàUàµäİÂ›Î[Ì{÷.ïO‘ÏšÅ·“¯Œïß(ß?•_‡ß??Ÿ¿ÿÿŒ N@QÀV T [à”À5I*Š*Gµ¦²©{©§©×©S4,M‰æH‹¦åÑÎÒúió‚‚ú‚¾‚i‚e‚—Ç…PBŠBB±BBç…F„>
+K
+[
+‡	ïn^aŠ„‰äŠ4‰‹|¥‹ÚŠÆˆm}"†SóK;!v]lNœ&n*ÎÏ?/şH–P•ğ”È8%Ñ'± )%i//yLòšäœ”S*ZªHªSjVš*m.%]$}Eú]nI¥—Ğ{èó222É2•2ı2Ë²J²>²Y²M²Oäˆr¹p¹"¹n¹yyiyWùLùùG
+†B¤ÂQ…^…%E%E?Å}Š­Š3J"JJéJJcÊeåå*åû*X†JŒÊq•UXÕ@5RµLõ®¬f¨¥v\mP£n¬ÎQ¯RÕ kXj¤h4hLh
+iºhfi¶j¾Ò’×
+Ô:¤Õ«õYÛ@;Vû´öc',v7ºªºlİ2İûz=;½]zmz¯õÕôÃôOè?0 ¸ì3è6ødhdÈ5l4œ5’7
+6*7eĞîŒ|ÆMcŒ±•ñ.ãã&†&I&çMş0Õ01­7Ù ´!lÃé“f²f,³J³qsºy°ùIóq–E•Å3¦3”YÍœ¶T±Œ¶<cùÊJÛŠkÕlµdmb½ÃºËeco“kÓo+`ëc[jûÔNÖ.Â®ÁnŞŞÀ>Ã¾ËãàìpÈaÔQÒ‘íXç8ïdä´Ã©Ç™ììå\êüÌEÕ…ëÒî
+»:¹vÛ¨°‘³±Õ¸9ºv{â®äàş³ÖÃİ£Ìã¹§g¦g¯Õk«W½×¢·•w÷ceŸdŸn_^ß ß:ß%?¿B¿q-ÿşwÄ¢Úq¾Õ›l7Ù4d”4²YisÚæ[[Ä¶Än¹¼•w+kë…`L°_p}ğ
+ËUÅZq)™g[³²_†2C‹BgÃÌÂ
+Ã¦ÃÍÂÃg"Ì"GÌFZDGÎEYG•F½vˆ®ˆ^Šq‹©‰Yõ‹mŠÃÇÇ]âpb8=Û¤¶¥mŒW‹Ï‰O0I8’0ÏuæV'B‰›Û’hÈOµ/Y9ù»ä‰ó”²”÷©¾©ÒøÓ8i}ÛU·ïß>n—şc:ƒÑ)“¹'sb‡åÊĞÎİ»äveïšÚm¿»vqOÌ_²´³
+³ŞíõÛÛ-™½;{ò;ûïrxr¸9£ûL÷U|ş>êûşızûíÿœš{;O;¯8o%ŸûJ~X=~ ¿À°àÄAìAÎÁ‘C‡jùÓ'»n)¢å½;²õÈ­bıâŠ£Ä£ÉGÇK\JÚÉ;xl¥4²t¸Ìª¬©\¢|ùÒñĞãC'˜'+$+ò*>Œ:ù Ò¾²¥J±ªøöTÊ©ç§}O÷şÈø±®Z¬:¯úS§f¼Ö³¶§Î¨®®^¢¾ nHn˜=tfà¬ÍÙ¶FÆÊ&¡¦¼sà\ò¹?ÿ4rŞù|÷Æ…Æ‹
+Ë›©Í¹-PËö–ùÖÈÖñ¶€¶ÁKN—ºÛMÛ›Öü¹¦C¦£ì²àå‚Nbgvçê•ô+]ñ]sW#®Nvoí~|ÍÿÚışëÎ×oŞ°»q­×²÷ÊM³›·Ln]ºÍ¸İzÇğNKŸA_ó/¿4÷ö·Ü5ºÛ6`<Ğ>¸a°sÈbèê=›{7î;Ş¿3¼qxpÄgäÁhĞèøƒĞ3c¾~”òhùñî1ÌXî¾'ÅO%VıªòkÓ¸áøå	›‰¾g^ÏO²'_ş–øÛÊTösÊóâiééºİ™Y»Ù›^L½Œ¹<—ó;ÿïå¯”_]üƒùGß¼ÿüÔkîëÕ7ùoEßÖ¼Ó×½à¾ğt1nqy)÷½èûÚŒ½ı>N/§®àVJ>©|jÿìüyl5nu5Åe}±($àğp ŞÔ @	 €:€ø%u/ö§şæh¾2øĞó_3ÖıÚPƒxŸİ ¸tp	„ÉÈºf#½™ ÖÓû+şTb¸îúøˆ?ñX]]D|æ  Ÿ¡ÕÕ•ÎÕÕÏ&È Ó ğ¬{À5ag|RtúFùşåÅş9 ·;5Jé  9’IDATxíİ[Œ\ç}ğoöÊ]ŞEQ¼H%J²+É±QJáF 	Š 1 J›ú%éC^
+§OEI½9y	š?…SH€”p´…ƒÄ5b NPA’-U¢mH6iÅ–(‰â»Ë½ÍôûyÖÃ™Ùár/³sÎ÷ixîç|ÿßÿìÎÏmBğ"@€  @€  @€  @€  @€  @€  @€  @€  @€  @€  @€  @€  @€ ä+ĞXkè|ğÁÎk×®ıUì¶®\¹²_KqÙ¥V«µÜh4–šÍfÑã–Ó;o¦nš»­ÛıÅ¸ØŸº­´LÙ»›†[£££Í¸|ñŠËË¤4­œ?§i©›^ccc+ıqĞ>­œÆ3·ı“–ë_ŒŒs¦ár}©?¶/µ=µ¥X_.ûÛÇ§qóö—¦õZ>5¢\.uÓ+ÍWOÃeb^ÒàÊzRŒq¥½åpê–Ûj·°°{Në5š·\&õ§m¥nzµÏŸ†ËiãÓ´öW9}|||e]óóóí³„öiiÂòòòÊ¼i¸sz—^7oŞ¼Õsûß‰‰‰•åÚûÛgš››k«ÍWÎÔ99~µå:Û^Î¿ŞîäääJLw[ÇÒÒÒšç½Ûºª>=îŸ}Æ}°ïôÍˆ?ş¯ºøsÖHûPê®e[SSS«Î¶Ú:îu™ÕÖ“6¼cÇ•íÇßK}ÛÜ÷jóÇ}»ï:ãïì¾ÛIwÎîX¦}zç´è¿²ıöiíË¤V›V.ß>=Í_.ß>¾×¾¾öqñw\š”~÷íŸQ+q”óuNë^m¾öñåzWWN¿½îå8ßbêO¯´L¹Íøó5?³–ÒøÎéi\œ–>pGÒÏaŒ­»qñ‘‘ƒ†Ÿû¹Ÿû«8KñY]í @€@•¾øÅ/î‰…ÎJ±Ö¯íkš)­àÏşìÏvüîïşnú3¹ı/º´|zÜ~·÷—ãRw´m²?uW{§eÆzLO%i¹Lš^¾Ëqe7µ#õ—mHıå¸²å¸‘‘PTõe;Ëéi¸ì/»íãVë‹­l·\ne\+¬$&-ŸŞéÕÙŸ–K¯Îñå¸õtû-ÓkZ—^ím¼5æ§ãÚ§ßë´4ÊAû«ÜÖf+×Ók½å´Î6”ãÛ»ı–OóİmúZçißfgÿZ¶Ñ¹ŒaUHyûë»
+™pãçåKq“øÕ¯~õÈoşæo~ÒÜ:±J;RAĞ÷õê«¯?÷Üs‹_ûÚ×öÅ?Ø5½ëÔÌìÌˆı÷÷]°B#Z…Z«© @ şĞøÒ±Gıç7ß|sñÑGM5È…~Qßõ¯¾'N,:ujÏéÓ§?ˆ+z23'c·6ÅL?Ó @€ íˆ×ÛüÛXƒ\ŒWˆ§úQï[ĞÄ…'Òµ:/¿ür:Õ¯8jüõö…eË @€@N—.^:ãmıÓ?ıÓÁ×_}w¿Øû4gÏ-.“ÿÛ¿ıÛùC‡=WôÉ~+3  °Y³³³ÇâºFÎ;7şÑGíï·Ş¾M¼E{å¹Ë—/ÿ»~+2  °é–ïâ]Üé:šU_}šxîjå|ÕâÂbºØ‹  0HôP£+ñ½·ßFû4ñáFåôt»ôá~+2  °ÓS‹S3ñŒ{ú­»,XzÎÓöÔÈ¾âô\ØH @€ÀÆ¦ç'çãƒ©võ[Uß‚¦íî÷õ[‰i @€ -H…ÌR¼†fºßúû4ñûÊ§7zîL?EÓ @€ ­Øyıúõô]+7*õÚPß‚&^\>B÷`¯…#@€ l±À®ãÇ7ãšõ4ñ›AË#4¶¸±VO€ è%°;~[A+dùé×÷˜«ïšxNYĞ¸†¦Q @€À–¤khZñMßïŸì[Ğ”§œâ·Q÷}:ß–‡b @€@®åİM+ÏÆëÑ· ™œœ,Ğô}˜M¯G€ Øôè˜tMo£ßºú4KKKåEÁCÓOÑ4 @`KâY¢âMü²ì4­Ğ*÷lIc­”  °ŠÀÎ4¾Ùl¦[·W}õ=BŸ\r*V¶êZL @€ l@qP%~Aåb¿Õ÷-hâw9•§œú>¯ßL#@€ l@ ¨Aâw9­ÿM¼m»,hÒ7]z @€ */{)®ãİĞš(hš6#@€ :¦Òğ†®¡9ş|¹Î¾Oç+gÒ%@€ l²@qM<å´Ôo½}¯¡i;B£ é§h °Uåu¼ë/hæççËSN
+š­J“õ @€ ıŠ‚&r*ï¼î9oß#4mKŒ·õë%@€ J ¸†&~—ÓúoÛ~è¡‡Ê#4}¿jPÙ @q§õ†Ğ¼óÎ;¥ÚZä”óë @€ 6C 8B366¶şçĞ´µÂ)§6½ @€ÀÀ6~Ûö±cÇÊSNĞ,o6D€ t
+lè”SÛÊ4mz	 @€ Á
+lè94gÎœ)[« )%t	 @€ A4–ã«ßF*ıtL#@€ †B Ş¶½)Ï¡QøE:5‚ ä)Ğh46åÍh|¢&@€ †A`³.
+†X´ ÈS ±¡‚æøñãåmÛyò‰š M9åäšaI§v @€ 6ëšé„L€ ƒÀ©S§B+¾úµÅ‘—~:¦ @€ C!°Y·mE0A€ ä)à”Sy5¨•@|Pğú¬wöìÙF­4C€ TR ~—ÓúšJF¬Ñ @€@­âwK¦ïrZAóôÓO×
+D0 @€@56tQğ»ï¾ë”S5ó®Õ @ V:å455¥ ©Õî  PMİå499© ©fŞµš ÔJ`C×ĞLLL(hjµ;† TS`CO
+¾xñ¢‚¦šy×j Px“Rkiiiıw99BS›}A  @ Òº(x||¼<BÓ·*ª´Æ @€ C/Ğl6×ÿå”ssså—W.}¤H€ ÔV`ll¬ïÁ•²`é	.Ğôœn$ @`ËN…°¡SNmMßªhË± @ [SáTØĞ)§X•Gh4ÙîF'@€ Û/°¡‚fvvVA³ı9Ô »@kC#4¹ï?â'@€ Ã!°¡‹‚Û
+w9G>µ‚ d)%Ó÷ò—¾w9-,,”Óû®$KYA @€ ¸~ıúúŸCÓv„fi`-¶! @€@‡ÀfrRĞtÀ$@€ '¿©ïÙ¢ò”RÏŒŒ”w9-öœÁH @€À –——×Ê©­ q„f É²	 @ K 8¨¿m{ıÍââbyGAÓåk 0 ›i*hâ]Nå)§…4Ø& @€ siÄäääú¯¡™VĞt²&@€ )07ÖˆgÖÊéÆN92e¶E€ t
+Ü<uêTØPAÓöšâüUç @€ ¶X`öÌ™3ùùùõ¡iÄ×íF*h¶8[VO€ ô˜Mc?¾şkhÚnÛï¹	#	 @€ [+pãÂ…óçÏ÷İJyLÏ™âc†‹éĞPĞô2’ ØbtQp˜››[ÿ)§xNyÊ©¸ej‹lõ @€ ;âA•ÙøÅ”ƒ®¿ i»†FAs¯ @`@7nŞ¼Y`Yu“}O9ÅïM(§ä¬º @€ [#0óğÃo¬ i»(¸8µ5í´V @€@ofh^OSÒ…Á½ç¸5¶<ÓoWæM_!	 @€ -¸/nLMM­¿ ‰Ö+[ÔH«%@€ ô˜‰ÕkLLL¬¿ i»ËIAÓÚ4 @`«®§/ËŞPAãÍVåÆz	 @€ 5
+Ü8zôh_ÿš¶ä´ë%@€ BàF:å¯£)/ƒé¹Í¾Û–¸ÖÖ¯—  0(â Ê;úÖ,ı'Œ”‡w¡TÚl‡ h˜I×ĞÄ§µìì¿[AS~³åÕÎ @€  0/nÅgã­¿ YZZJ_J™Ò8B3€ŒÙ Ğ%P<Ü7Ş¨4Ş5¥mDß#4ñŠâÙ_|1­À“‚ÛĞô @€ ¸O75[­Öd¿-ö-hšÍæÜØØØş¸‚…ø„¾KıVd @`æ÷íÛ—.ÙÙoİ}šÇ|æ¹ç{ôÔ©S#ûöïû÷ıVd @`“>Šë[·l/…±½ıÖİ· 9räÈÍgŸ}öÕxÿ÷ŞÿıÿWt¦ßÊL#@€ l’@szçô¯¦u}ó›ß\Şµo×¡~ëí[Ğ4æîİ»w>òÈ#ÿ#®¤Õ
+­çc÷å~+4  °AïÄšãÈÌÌÌñÚ™tsRëğáÃŸì·Î¾MZğÄ‰ó¿÷{¿wí‹_üâD¼7ğÙG}ä™éééÿ‡ËÛºc¯ @`ıñzİÿõàCşËXkœˆk¹ğ…/|á©xtf4­1^Góå~k.œ×opîÜ¹}ñ(ÍÕ?ıÓ?İsáÂ…ÏÇÛ¹ÿ<^W“Š™´ü®ø>ßéPĞáÛïƒ#aäØ¿76ê¾Øİßi¾éøŞßSñ
+¤tUº¯<Vé}×"+ÎãE€ l¿@y`c96%õ/Å÷b|/ÄwzôËl|ßŒïô%×W¡q9v?n†fº6æ||¿ßö¾ûÓzğğ¯zè¡ÿrüáã¿ókŸÿµo¤3Fq|ß×š
+š´†xÈgôG?úÑø+¯¼²xñâÅ±û½¯|å+©­¾[â‰¶oÛwîÜ:”ªÂ«Æ06Ş÷™>C©¦ @€@ZÍVX^^W®\	?şñÃµkkû&¢x0aÍŸïÃæòÇüÇŸ}òÉ'¿šÿ™ÿöôÓO§âè®¯uüÿğcñ”ÓŞx_øøä¾İ©Ø‰¯Ø‰—ÙÄê,[XGr–'''cg©§/Ç‹‹—ã³mšñÆÍøÔ¿¢§7ãôV,Šîââb+N/ŞhÅeZñêæÖ±cÇŠnŠ(n·(DâÑ¢¢Ÿ•Ó:}útËÁƒ‹n¼ö§qöìÙÆ®]»± ‰ë;ÄØ»ï¾;ùöÛoÏ|ùË_¾q·‚æøñãáW~åWÂ3Ï<>x4ÄuŞÔ @`³–—ÂìÜlxıõ×Ãéÿ~:œ9³¶{sRAó'ò'¿úÔSOı(~ş^‹`™Ÿµ‹ñ37}¯|®¦õÅ‚¡hîG}”ÎÄYÇÆã¼“ñÑ-“ñ³z2~.OÅÏõéø¹>‹«t†e,ÄéE'Î;§ÍÆòhÌÍØ?—[ˆµÂbœoñòåËË©ˆŸõËŸûÜçÒÑ–V\¦ïA…¢Q÷ğÏº9üÒ/ıR:¤tñöû67³~éK_ê{ëWÙÊX…ãÏx6<öØcá¾ûÒÙ3/ 0X|¤?âC,Âßíù»{Úèïÿşïÿı=-Pñ™³¼^åæÍxm³ P,šxZê®Õ&Ã!@€ dYĞÌÎÎ:B“ÁÎ-DÈG Ë‚&ŸôŠ” ä!eA³gÏGhòØ¿EI€ ™dYĞœ?ŸåãE€ ÔE Ë‚Æšºì¾â @€ ·²,h$Ÿ ¨—@–Íşıû]CS¯ıX4 ¹@–MüúƒÌÓ.| P/,šz¥P4 @€@–MüN&§œìû @ FY45ÊŸP @€ (  ± @€ •PĞT>… @€ ²,h.]ºäû>¨‘@–Mò' @ 
+(hì @€@å4•O¡  @€ ,š#G¸†Æ¾O€ j$eAS£ü	… ˆ
+» PyMåS(  @@Ac @€ */eAóÚk¯U>q @€ ~*eAsôèQw9ıtĞG€ */eASù¬	€ ¸C@As‡ @ Š
+š*fM›	 @€ ;4wp @€ ª(  ©bÖ´™ ¸C@As‡ @ Š
+š*fM›	 @€ ;²,hzê)Ï¡¹c70@€ ª-eASí”i= Ğ)  é1L€ TN@AS¹”i0 Ğ)  é1L€ TN@AS¹”i0 Ğ)  é1L€ TN Ë‚æôéÓ•K” @€ «dYĞ¬Îa
+ PEM³¦Í @€ÀY4O?ı´'ß± @€ ÕÈ² ©vÊ´ èPĞtŠ&@€ *'  ©\Ê4˜ èPĞtŠ&@€ *'  ©\Ê4˜ èPĞtŠ&@€ *'  ©\Ê4˜ èPĞtŠ&@€ *'  ©\Ê4˜ èPĞtŠ&@€ *'  ©\Ê4˜ èPĞtŠ&@€ *'  ©\Ê4˜ èPĞtŠ&@€ *'  ©\Ê4˜ èPĞtŠ&@€ *'  ©\Ê4˜ èÈ² 9yòd«Â0 P],šê¦KË	 @€ ^
+š^*Æ @€ •PĞT*]K€ ôPĞôR1 ¨”€‚¦RéÒX @ —€‚¦—Šq @€@¥4•J—Æ @€ ½4½TŒ#@€ *%  ©Tº4– è%  é¥b P)M¥Ò¥± @€@/M/ã @€ J	(h*•.%@€ z	(hz©G€ TJ Ë‚¦ÑhT*IK€ ôÈ² éOb* P5MÕ2¦½ @€@—€‚¦‹Ä @ j
+šªeL{	 @€ .M‰ @€@Õ4UË˜ö @€ ]
+š.# @€ ª	(hª–1í%@€ º4]$F @€ UPĞT-cÚK€ t	(hºHŒ @€ ª&  ©ZÆ´— èPĞt‘A€ TM@ASµŒi/ Ğ%  é"1‚ ¨š€‚¦jÓ^ @ K@AÓEb P5MÕ2¦½ @€@—@®M«KÂ @ ²¹4•M˜† @€ İ
+šnc @€ Š	(h*–0Í%@€ º4İ&Æ @€ PĞT,ašK€ t(hºMŒ!@€ *&  ©XÂ4— èPĞt›C€ TL@AS±„i. Ğ-  é61† ¨˜€‚¦b	Ó\ @ [@AÓmb P1MÅ¦¹ @€@·€‚¦ÛÄ @ b
+šŠ%Ls	 @€ nM·‰1 @€@Å4K˜æ @€ İ
+šnc @€ Š	(h*–0Í%@€ º4İ&Æ @€ PĞT,ašK€ t(hºMŒ!@€ *&  ©XÂ4— èPĞt›C€ TL@AS±„i. Ğ-  é61† ¨˜€‚¦b	Ó\ @ [@AÓmb P1MÅ¦¹ @€@·€‚¦ÛÄ @ b
+šŠ%Ls	 @€ nM·‰1 @€@Å4K˜æ @€ İ
+šnc @€ Š	(h*–0Í%@€ ºÆºGC ¾­V+¤·º
+4"´²[×8ÅE S@AÓ)b¸¶©i6›Å»¶A
+,{TÈŒŒÜ:ø®¨É~wÈ
+@A“Uºóv~~>\»v-\¾|9|üñÇavv6OQg!Ğñ¿‘F˜î;öîÛöìÙ&''ƒ'‹] Û 4Ù¦>ÀÓQ™kW¯…ï~ï»á×ß/¿ürxï½÷ò^”Ù
+¤ÂåÁÏ?ÿ|øôg>|òÉpğàÁâÈ¢&Ûİ¢ö+hjŸâ|\ZZ
+éèÌûçß¯½öZøÖÿùVxå•W4ùîYE~ôÁ£afv&Ìİœ+
+™tºuÿşıajj*+Áæ#  É'×ÙEº°°.^¼Ş~ûíğ­oİ*f.]º”ƒ€ó¸|érQÀß¸~#¤â>ı<|úÓŸVĞä¹;dµ‚&‹4çäÍ›7ÃùóçÃ¹³çÂğCGfòÜ²znn.Ì½7ZÍVØ±cGñ~øá‡Ã¡C‡²5x½<‡¦ŞùÍ:ºtñï?ÿó?og½+d|ºşÛßşvñNı[õîPëà4µNoŞÁ¥#4|ğAñNı^r(Tÿ|HGm¼ÔU@AS×ÌŠ«¸f ıEzéò¥°°¸@„ øLÉt„ÆQ»B4uÌª˜
+åååâ/ÒôWiê÷"»@,er'45N®Ğ @€@.
+š\2-N PcM“+4 ‹€çĞä’iqŞU`ïŞ½ágş™°oß¾m}D|z¢kzÚ•+WÂ{?y¯øª»6ŞÈ\@A“ù üŸ
+¤bæ·û·Ã3Ï<&&&ÂèèèO'°/=ÑõÆáõ×__ıêWÃµï^àÖmŠ ÕPĞT3oZ½{÷ì?û©Ÿ/¼ğBñxø±±íùñHÏI·›/Ì/„¯ïşúDj•¨Ÿ€khê—S @€ ì4Ù¥\À @ ~
+šúåTD @ ;Mv)0¨Ÿ€‚¦~9ÈN@A“]ÊL€ ê'  ©_NED€ ²PĞd—r @€ ú	(hê—S @€ ì4Ù¥\À @ ~
+šúåTD @ ;Mv)0¨Ÿ€‚¦~9ÈN@A“]ÊL€ ê'  ©_NED€ ²PĞd—r @€ ú	(hê—S @€ ì4Ù¥\À @ ~
+šúåTD @ ;Mv)0¨Ÿ€‚¦~9ÈN@A“]ÊL€ ê'  ©_NED€ ²PĞd—r @€ ú	(hê—S @€ ì4Ù¥\À @ ~
+šúåTD @ ;Mv)0¨Ÿ€‚¦~9ÈN@A“]ÊL€ ê'  ©_NED€ ²PĞd—r @€ ú	(hê—S @€ ì4Ù¥\À @ ~
+šúåTD @ ;Mv)0¨Ÿ€‚¦~9ÈN@A“]ÊL€ ê'  ©_NED€ ²PĞd—r @€ ú	(hê—S @€ ì4Ù¥\À @ ~
+šúåTD @ ;Mv)0¨Ÿ€‚¦~9ÈN@A“]ÊL€ ê'  ©_NED€ ²PĞd—r @€ ú	(hê—S @€ ì4Ù¥\À @ ~
+šúåTD @ ;Mv)0¨Ÿ€‚¦~9ÈN@A“]ÊL€ ê'  ©_NED€ ²PĞd—r @€ ú	(hê—S @€ ì4Ù¥\À @ ~
+šúåTD @ ;Mv)0¨Ÿ€‚¦~9ÈN@A“]ÊL€ ê'  ©_NED€ ²PĞd—r @€ ú	(hê—S @€ ì4Ù¥\À @ ~
+šúåTD @ ;Mv)0¨Ÿ€‚¦~9ÈN@A“]ÊL€ ê'  ©_NED€ ²PĞd—r @€ ú	(hê—S @€ ì4Ù¥\À @ ~
+šúåTD @ ;Mv)0¨Ÿ€‚¦~9ÈN@A“]ÊL€ ê'  ©_NED€ ²PĞd—r @€ ú	(hê—S @€ ì4Ù¥\À @ ~
+šúåTD @ ;Mv)0¨Ÿ€‚¦~9ÈN@A“]ÊL€ ê'  ©_NED€ ²PĞd—r @€ ú	(hê—S @€ ì4Ù¥\À @ ~
+šúåTD @ ;Mv)0¨Ÿ€‚¦~9ÈN@A“]ÊL€ ê'  ©_NED€ ²PĞd—r @€ ú	(hê—S @€ ì4Ù¥\À @ ~
+šúåTD @ ;Mv)0¨Ÿ@îM³~)ÈO ÷‚&¿Œ‹˜ ÔP@ASÃ¤
+‰ ä&  É-ãâ%@€ 5PĞÔ0©B"@€ ¹	(hrË¸x	 @€@45Lª @€@n
+šÜ2.^ PCM“*$ ›€‚&·Œ‹— ÔP@ASÃ¤
+‰ ä&  É-ãâ%@€ 5PĞÔ0©B"@€ ¹	ŒåpG¼ËqXQ×’ëàââb¸|år¸páBØ¹sgßŠ¹¹¹pñâÅ¢-©M^ pwÜš»™#™™™pîì¹°ÿş°wïŞ099¹-±ß¸q#|øá‡áìÙ³áÆÌmiƒ @ j
+šªeL{·LàêÕ«áÍ·Ş3³3a÷îİabbbË¶ÕoÅåš³?<®_»ŞoVÓ @à¶€‚Æ®@à¶@:Íóòÿ}9¼õæ[al|,ŒŒlÏÙÈååå°0¿Ò£Ë—/Ë¬A@A³$³ä!Œüä'?É#XQ @ fÛó'hÍ…C€ l¯€‚f{ım}FGGÃ;ÂÔ©0:2º…[²jÕh„F5ª•Ö!  YšEª!n»Nw,íÛ¿oÛ.ğ­†”Vf#ë™F#–5ñíE n®¡©[FÅ³"Î>t8>|¸8R³2AŒ¦¦¦ŠÂşèÑ£!õ{¨«@îGhšuM¬¸BØ9½3;v,{øX˜FB Kt”òÄs'Š÷}÷İçèL–{AAç^Ğä‘åL£Ü1µ#9r$ìxxì±ÇÂƒ>è/ÔL÷…ÃNÏQJÌ£ÇÏ?÷|øÌg>öíÛ—#…˜3PĞd’èÃL¿ĞÜ |â‰O„~ñ…ğüóÏ¿às´s~»ví
+?ñxxöÙgÃÏÿüÏ‡§z*ìÙ³'?g#àšlR_ ccc!İé”®8qâDq§Sº®&=k¦Ùl†V«•Šˆk/P^ô{ÿı÷‡'>ñDxæ™gŠî<°m‹¬=º ‡B@A3iĞˆ­H¿Ü÷ìİSüuš.N­^»~-¤/}l.Ç¢&şçE .é¶ìô„ëÑ±ÑâVÓõ3é´S*nÒxw7Õ%Óâè%  é¥b\­Ò—L<x08p <òÈ#aii©(hÒW¤—#5µJw¶Á”ÅJ*\ÒÑÉôN§]2ÙîÙ® É.åùœ~á§gÓ¤ÓPé}YÈ”İ|eD^² I±”ELÙ­C|b p7Íİ„L¯@ú…ŸŞé—¼ÔKÀoözåS4 @ Ëg¬å^Ğd™t?ë …@Vßq‘{A“Å-HÈO ·ë4ùíã"&@€ µPĞÔ.¥"@€ !¼ôÒKN9Ù @€ jœ<y²ÚÜcë¡¹G0³ @€ Ã'{Aã.§áÛ'µˆ Ü³@îÍ=ƒY€ TAàôéÓ®¡©B¢´‘  P
+8BSJè @€ zÜúæİzÄ²æ(4k¦2#¨À‹/¾ØªNk7ŞRÍÆ­ ØfÍ6'Àæ	 @€ ä^Ğ¸m{ãû5 @€À
+Ä'a«¶®I¹4['kÍ @`â“‚]C³ş6M€ ¸gGhî™Ì @€À°	ä^Ğdy¯ş°í„ÚC€ ›/Ğh4œrÚ|Vk$@€ $å/¹¡Ğ¾e3 @€ÀV
+(h¶R×º	 @€ (hÂl# @€ÀV
+ä^Ğdyq+w(ë&@€ Û!{A³æ¶I€ l²€‚f“A­ l³@–g4Û¼×Ù< °qÜš,«Øï6Ö@€ †K ÷‚f¸²¡5 @€Àº4ëb³ 0L
+šaÊ†¶ @€ dy9EîM–IßøÏŠ5 @€ áÈ½ ®lh °.ÍºØ,D€ “€‚f˜²¡- @€Àºr/h\C³®İÆB 0ÄY~¶å^Ğñş¨i @€ÀZ4k•2 0´¹4Y–Ú½QÃ @€À:r/hÖÉf1 0´ËCÛ²-lXîM–IßÂıÉª	 @€À¶ä^Ğlº @€ ›+  Ù\Ok#@€ Û-åõ¡¹4Y&}»ÒlŸ l¶@îÍf{Z °
+šm@·I °…Y}È½ É2é[øCdÕ @`[r/h¶İF	 @€ ÍÈ½ q„fs÷'k#@€ íÈò³mlûİµ€@oV«Êw³ÙéíE€À`F(ß###+ıƒÙº­¸wÍ½›Yb@©˜Y^^KKKa~~¾èhÓ6C {TÄ¤÷øØx˜˜œ£££…I*r¼£@î?ù‡p¯L…L:sùòåpîÜ¹ğñÇM*n¼Œ@*\FGFÃØØXQĞìß¿?<ôĞCaß¾}a|||¥ÀLklå²ülË½ ¹Ç}ÄìƒHÅÌââbxçwÂ_üù_„7şß¡¹Ü,N?bû¶A€@ˆbâI§â(M:Róä“O†ßøßŸyæ3aïŞ½
+;ÉĞ	ä^ĞdYÅİ^ØÑ ¹¹¹ğá‡†ï}÷{áå—_¯¾újÇ	´ÀG}öß·¿Øì§?óépèĞ¡âºšA·ÃöÖ$åg[îÍšö3VàêÕ«á7Ş¯¿ñz¸råÊ`7nkôxï½÷Âßüõß„Ë—.‡ûî»/<ğÀÅ|®©éÉeä6(h¶İ&WH×Ï¤"æÍ7ßo½ùVHÅÛ/pıúõğıï¿(dÒÏhº¦-](¬ ÙşÜôhA–zM=Á¨í(oÑNEÌ™3gŠ÷µk×¶§1¶J€@Oôsº´¼TÜu˜ú½‹€#4Ã’	íX˜¿9.|t!\¸paeœ†C >ÊúÃ‘
+­èÈ½ ÉòÂ©}`hW]{ÌÅĞäDCt
+·sÇSMåÃö:§
+,?Ûr?å4{FÜ)°gÏğÉñÉğÉO~2ìŞ½ûÎ‰†ØéééğğÃ‡c»vírıÌ¶daÍUĞ¬™ª>3f™ôaN_úëïèÑ£áóŸÿ|øõÏÿzÑ?ÌíÕ6¹Üÿıá~áÂ¿øBqË¶‚sÉ|uâtÊ©:¹Ê¦¥éI¤Ï<óLqşÊå+áÀÅˆé+ÒÍ–:4›A Û.0Ò)ÆìxQÌ¤ŸÍôÔà•SÄÛŞBè!å/ÉÜšûQÛ-011QüÂ,q¦z¥[FgffBzè^zŠ°ƒH_s0=5>xâ‰pøğáâ”Ó`¶n+Ö.{A“e»öİc{æL‡²§¦¦Â‘#GB:ÌŠ˜TĞÜ¸q£èOGj¼Œ@*hÒÏcº-=PoÇÎ†~#[Éò³-÷‚f#;Œe·X ÒN¿LÓİé¨Múş˜tÊÉ³/¶Şê	´	¤Ÿ¿ôGFñ%•ñçĞ©¦6œáíUĞon¶¬eY&}Ë47yÅégz§_¨©°ñ"@€ «	¸m{5ã	 @€@5²üc=÷‚&Ë¤WóçS«	 @€Àê
+šÕmL!@€ UÈòõÜš*î¨ÚL€ ú	(húéÔtZ–I¯i.…E€ ·²ülËıM–I÷O€ ê&{AS·|Š‡ dùÇzîM–I÷³N€ µÈò³MASë}Zp ¡€‚FÒ32ÔM@AS·ŒŠ‡ d(  ‘ô„L€ uPĞÔ-£kˆ'Ë¤¯ÁÅ, P],?Û\\İVË	 @€@/M/•šË2é5Ï©ğ »@–Ÿm¹¡iå¾×‹Ÿ j'  ©]JïP–I¿;‹9 @ ÂY~¶å~„¦Âû«¦ @€ 
+š,õ™eÒëRÑ @ {,?Ûr>BÓˆ»|–IÏşG ê-°\ïğzG—sA“D4½÷c	 @ ºY~¶)hª»Ãj9è%  é¥RçqĞpÛv,6ä)°”cØ¹¡É2é9îèb&@€@.¹ş±{A“åa¹\~¨ÅI€ L²üc=÷‚Æ)§LÚ…M€ dùÇzîM–I¯ñ±Ğ @ ·mg¸(h2Lº	 Ps,?Û¡©ù^-<ÈNÀšìRéa¹ó,dä$à¢àœ²};Ö,Ëe˜g! @ 'GhrÊöíXİå”aÒ…L€ š(hjà^áeyX®„q P,?Ûr¿(ØšÚüü
+„ n8B“á®àš“.dÔ\@ASó÷
+/Ë¤÷‚0 j#P|¶µZ­Fm"ZC ¹Ÿrr„f;‰Y @ R‹•jí&56÷‚ÆšMÚ‘¬† †C šY~¶)h†cÿÓ
+ °YîrÚ,É
+­'Ë*¶BùÑT¸w,?Ûr?Bãš{ÿA±·@q„æ¥—^rQğpçióZ—ëyÆÍ´&B…Ô¦“'Ofõ¬µÜĞdyXnø4‰ 6Oàúæ­ª:kRĞT'WZJ€ Ö"pc-3ÕmMİ2*È]`&G€Üç¸×‹™ õ˜«wx½£Ë½ qMïıÂX¨®€‚¦º¹[WËÓÕßY>|h]Z"@€ ªÌ§†6w9U%c›ĞNGh6Ñ* @`¨Š‚f¨Z4€Æä~ÊÉšìd6A€ ğå”å9B3yĞ
+Ø<ÍæYVfMĞT&UJ€ kÈò³-÷SNĞ¬ñ§Ãl PMeRµy-¾ïbóVgM @`Û²üc=÷#4W·}·Ó  °¹
+šÍõÚµµúµ¡m¥† @€ õ	dùüìĞ´Zw<g(Ëï»XßÏ‡¥ @ "
+šŠ$j3›© ÙLMë"@€ a¸ã/÷ahĞ Úİš—^z©ı”S–OSÄe °m
+šm£à†O<Ù¾5w9µkè'@€ :(hêÅ»Åpúôéö#4Y>MñnF¦ @€@¥4•NßğàÁö‚&Ë[ÛÖHe6 Pì®¡Ù½{·‚¦2»§† @€À:Ú?çÖ±x5É® ™ššjOt–‡åª¹«j5¬Q õÙÏ~vjóÖf¶ì
+š«W¯¶eOAÓ†¡— j!°<99y ‘ÜCÙ4óóóíÍ=P™• TB =XïşJ´t™]AíÆÚüÚO?µÖK€ *+ĞŒOÅ?XÙÖ¯³áíîë\EµÛ»wïx[‹w´õwõŞ¸q#œıáÙ°g÷ğÁ„xAq×<F @€ ­XZ\
+³s³áÌ™3áÚµ5}ıà\lK«ÑhdwÊ)»‚faaa2íxŸúÔ§½õÖ[}Ğ|øá‡áë_ÿzxå•WB¼˜8ŒgÇµU?£ÖK€ kh5[ayy9\¹r%üøÇ?^Ãáìí™¯eæ:Í“İ't¼Pª¸ò{ddäS1‘¯÷KæÌÌL8{¶Ü7úÍi
+ï¥VÄ#4÷EkØˆì®¡i6›{nû>»K´¶) °¥Ğøşíì;uêTVŸñY›’¼¸¸XWLL)hnïù: P}fhş E/
+zñÅ³:“]AO5=x{—ˆ]Ím¨…À;)ŠxÊiî?øAqÍh-¢ZCÙ4cccOÜNöõØõ]NkØIÌB€ Õ˜>[ÚØ¿ÿ·|ğAM5Ò¶¾VÆ‚æ_¥%ã‘š÷cGA³>FK @€À
+ÌÎÎ^ˆ_{°ãñÇÿß±¸Ù9„MÜ²&ew„&Ş~ı‹ñÜb#6éÂ©ôÕ3[¦kÅ @`@ñ‚à¿Œ›Z:~üø?ú£?zo||\A3 ûmÙÌÎ;G¾ò•¯ìŠİòJğomKCl” l¢@¼ ø?¦ÕÅç­VüÃ=«çô}°Ü&:ÍªæææùÇüÇŸùå_şåÿ5²oç¾Ÿ½:sõcÿñU5;4IÑØˆÀk;wíüøtû·6²’ª/›]A“Ÿ¶xßC=t9õÿÖoıÖÈéÓ§Ëki’GúòÊôN·»u¾Ó×&¤w9¾½¿—ºiù4­\Og7Í“N÷¥ñíÓÊáÆH)ûS·œ·W7µ9­/uÓôò].7ÒŠOÁn_N£Šy;§•ã;çKÃíÓÊş²Û>½×¯ÛkÚjãR,å«ÜNnïïîœÖ9=§Wûºoé^ïzÇßm¹rzÙíÕ–rÚ½t{Å~/Ë×}ŞôÅ}ëy•¿'î¶l¿õ¯6í^Æw¶£sÙ~Ãı¦µ¯·}¾²¿ì¦øËşÎîjÓ:çë5Ü>.õw—ëNãÓåÓ‹eâi—rZ1Ü6oûpºÃµ}¾{šÆ•ı+İxä£¿2îöüi¸|§åSZw9_Ù_ÎS¯Ö]¼½|9=§Ë"nÆwêOëImIo¯ôa–åëwŞ™üÎw¾³ôo|ãsßÿŞ÷ÿ>–çâµ5?Š·ºo´#Ê•V£u-›‰ãfãğÍØ??Ú_n,/ÆqÅ;O;ŞR|`ßrœ¾<Ö[^]ƒÍåx¸¯9¶4Ö\Yh-5Ç›££qs£­…‰…[ıq8^ÄÕJããüÅ{üúxëR¸Òp<Zì¸E÷âÅ‹wÇ'¯ìØñú •ş]»vµÂwCü?ş_;vìX™–†ã÷Rİ1œÆ¥×Áƒ{¿5õÖ¿O?ıt÷<§nM;n÷Üìõo÷²½æÚšqÛ¹í­‰ÈZ	 Ğ&¦ß©¸Êî•mA“2ışûïOÇ÷_Æ/ü:‹‘÷cr1v¯Ç÷XHÌÆ‡ğİŒ…Ë|¼#j!N[LïXX,ÅéKqÜr<OY-©?¾RQRtc‘Ñ\ZZj¥w\GñŞ³gO+Îß:pà@ëüùó!uS~ò“ŸÜQDÄSb+ºÇ+úÓ—’¥W¼ĞkeÚk¯½>ñ‰O¬3ÜşçsŸû\+ujµÒ´tÇ2/½ôÒÊ´ö“'OŞ1_û´Õú£Uû¤{^¾}aıj"pÇE{Lñ÷HûàÀúãÏüªmZ­ñ÷AÏIñ÷Ì]×çË~ó›ßì;ïÛo¿]L?qâÄÛŠ_?³²\ücª˜öî»ï®ŒK#âsw§q.\hÄ#ñ©7Ä?‹éGYé¿zõj#şWLŸø;9}ùc1_üı_tã•ø8EübãÇ7â ÔMÆßéÅÑĞ4œŞóóóøyPôÇßÿ±w¤Nİøá0Gİ4ó?š†S7M‹«M¤áÔŸ^±›¾ÅÙâ_ÊËãqÚDœe"uã¸©ØŠÃ;ã¬{â©÷ÇøÇ?^ÿMŒeMßb×íE€  @€  @€  @€  @€  @€  @€  @€  @€  @€  @€ Ø$ÿ{É„e?(H    IEND®B`‚
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: <http://127.0.0.1:8879/second.html>
+Content-Type: application/http;msgtype=request
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-Record-ID: <urn:uuid:132C56C2-CB1C-4734-9432-EFB45B4BFD23>
+WARC-IP-Address: 127.0.0.1
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Block-Digest: sha1:JATC5PBEAMHI35ORLQXIGHYY3DXCADZR
+Content-Length: 173
+
+GET /second.html HTTP/1.1
+Host: 127.0.0.1:8879
+Referer: http://127.0.0.1:8879/
+User-Agent: Wget/1.25.0
+Accept: */*
+Accept-Encoding: identity
+Connection: Keep-Alive
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Record-ID: <urn:uuid:915A9384-030C-41B4-B67D-C9B66F2A443D>
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Concurrent-To: <urn:uuid:132C56C2-CB1C-4734-9432-EFB45B4BFD23>
+WARC-Target-URI: <http://127.0.0.1:8879/second.html>
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-IP-Address: 127.0.0.1
+WARC-Block-Digest: sha1:KKLAFSLY5QAGJTNQJ4ENEXDJGSDSRC5Y
+WARC-Payload-Digest: sha1:HDHZ4ULRWSIZSO6L3ULTXE45TDTOKA3Z
+Content-Type: application/http;msgtype=response
+Content-Length: 420
+
+HTTP/1.0 200 OK
+Server: SimpleHTTP/0.6 Python/3.8.20
+Date: Wed, 07 Oct 2026 05:46:09 GMT
+Content-type: text/html
+Content-Length: 234
+Last-Modified: Wed, 07 Oct 2026 05:41:48 GMT
+
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Second archived page</title><link rel="stylesheet" href="style.css"></head><body><h1>Saved second page</h1><a href="index.html">Back to archived page</a></body></html>
+
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: <http://127.0.0.1:8879/index.html>
+Content-Type: application/http;msgtype=request
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-Record-ID: <urn:uuid:0664B589-9205-4515-A2C0-596CF5DA6B3D>
+WARC-IP-Address: 127.0.0.1
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Block-Digest: sha1:VSZJCVI4FW6QVAN4JN4RAFOMANOENZRN
+Content-Length: 183
+
+GET /index.html HTTP/1.1
+Host: 127.0.0.1:8879
+Referer: http://127.0.0.1:8879/second.html
+User-Agent: Wget/1.25.0
+Accept: */*
+Accept-Encoding: identity
+Connection: Keep-Alive
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Record-ID: <urn:uuid:67FD080C-95AB-4FCA-BF62-FCDB5F5F3F1A>
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Concurrent-To: <urn:uuid:0664B589-9205-4515-A2C0-596CF5DA6B3D>
+WARC-Target-URI: <http://127.0.0.1:8879/index.html>
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-IP-Address: 127.0.0.1
+WARC-Block-Digest: sha1:PT7SJHWZIKA23Z2XPNRCVRYXN26K6A3G
+WARC-Payload-Digest: sha1:JS72GY6U3CBAMQD2DLHHEL3XVOL46GYS
+Content-Type: application/http;msgtype=response
+Content-Length: 614
+
+HTTP/1.0 200 OK
+Server: SimpleHTTP/0.6 Python/3.8.20
+Date: Wed, 07 Oct 2026 05:46:09 GMT
+Content-type: text/html
+Content-Length: 428
+Last-Modified: Wed, 07 Oct 2026 05:41:48 GMT
+
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Archive replay acceptance</title><link rel="stylesheet" href="style.css"><script src="app.js" defer></script></head><body><h1>Archived crawler page</h1><img src="archive.png" alt="ArchiveBox logo"><p id="script-result">Script pending</p><a href="second.html">Visit saved second page</a><iframe src="second.html" title="Saved child frame"></iframe></body></html>
+
+
+WARC/1.0
+WARC-Type: metadata
+WARC-Record-ID: <urn:uuid:1A7E9CEE-605A-41F6-AF9E-9BC2B2716D24>
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Target-URI: <metadata://gnu.org/software/wget/warc/MANIFEST.txt>
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-Block-Digest: sha1:VM2XVOOYLIQBLWFTQAV27WCWRLMR6WNQ
+Content-Type: text/plain
+Content-Length: 48
+
+<urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+
+
+WARC/1.0
+WARC-Type: resource
+WARC-Record-ID: <urn:uuid:90B04F64-E2A3-4766-B3FF-3B1A5655B671>
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Concurrent-To: <urn:uuid:1A7E9CEE-605A-41F6-AF9E-9BC2B2716D24>
+WARC-Target-URI: <metadata://gnu.org/software/wget/warc/wget_arguments.txt>
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-Block-Digest: sha1:M46MWCRFWS23EAQRINCHTXVXTJHSCNZM
+Content-Type: text/plain
+Content-Length: 174
+
+"--recursive" "--level=2" "--page-requisites" "--warc-file=/tmp/abx-replay-wget-depth2/wget" "--directory-prefix=/tmp/abx-replay-wget-depth2/files" "http://127.0.0.1:8879/" 
+
+
+WARC/1.0
+WARC-Type: resource
+WARC-Record-ID: <urn:uuid:BEBB0589-1629-43BC-B074-87F690114FE9>
+WARC-Warcinfo-ID: <urn:uuid:DAE5702E-065E-4A63-84F5-24329863EB10>
+WARC-Concurrent-To: <urn:uuid:1A7E9CEE-605A-41F6-AF9E-9BC2B2716D24>
+WARC-Target-URI: <metadata://gnu.org/software/wget/warc/wget.log>
+WARC-Date: 2026-10-07T05:46:09Z
+WARC-Block-Digest: sha1:GXK2EA6EZSXJFVVFGKHHRQIQKQPLUQWY
+Content-Type: text/plain
+Content-Length: 3153
+
+Opening WARC file â€˜/tmp/abx-replay-wget-depth2/wget.warc.gzâ€™.
+
+--2026-10-06 22:46:09--  http://127.0.0.1:8879/
+Connecting to 127.0.0.1:8879... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 428 [text/html]
+Saving to: â€˜/tmp/abx-replay-wget-depth2/files/127.0.0.1:8879/index.htmlâ€™
+
+     0K                                                       100%  204M=0s
+
+2026-10-06 22:46:09 (204 MB/s) - â€˜/tmp/abx-replay-wget-depth2/files/127.0.0.1:8879/index.htmlâ€™ saved [428/428]
+
+Loading robots.txt; please ignore errors.
+--2026-10-06 22:46:09--  http://127.0.0.1:8879/robots.txt
+Connecting to 127.0.0.1:8879... connected.
+HTTP request sent, awaiting response... 404 File not found
+
+     0K                                                       100%  447M=0s
+
+2026-10-06 22:46:09 ERROR 404: File not found.
+
+--2026-10-06 22:46:09--  http://127.0.0.1:8879/style.css
+Connecting to 127.0.0.1:8879... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 87 [text/css]
+Saving to: â€˜/tmp/abx-replay-wget-depth2/files/127.0.0.1:8879/style.cssâ€™
+
+     0K                                                       100% 83.0M=0s
+
+2026-10-06 22:46:09 (83.0 MB/s) - â€˜/tmp/abx-replay-wget-depth2/files/127.0.0.1:8879/style.cssâ€™ saved [87/87]
+
+--2026-10-06 22:46:09--  http://127.0.0.1:8879/app.js
+Connecting to 127.0.0.1:8879... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 87 [text/javascript]
+Saving to: â€˜/tmp/abx-replay-wget-depth2/files/127.0.0.1:8879/app.jsâ€™
+
+     0K                                                       100% 41.5M=0s
+
+2026-10-06 22:46:09 (41.5 MB/s) - â€˜/tmp/abx-replay-wget-depth2/files/127.0.0.1:8879/app.jsâ€™ saved [87/87]
+
+--2026-10-06 22:46:09--  http://127.0.0.1:8879/archive.png
+Connecting to 127.0.0.1:8879... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 17730 (17K) [image/png]
+Saving to: â€˜/tmp/abx-replay-wget-depth2/files/127.0.0.1:8879/archive.pngâ€™
+
+     0K .......... .......                                    100% 3.30G=0s
+
+2026-10-06 22:46:09 (3.30 GB/s) - â€˜/tmp/abx-replay-wget-depth2/files/127.0.0.1:8879/archive.pngâ€™ saved [17730/17730]
+
+--2026-10-06 22:46:09--  http://127.0.0.1:8879/second.html
+Connecting to 127.0.0.1:8879... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 234 [text/html]
+Saving to: â€˜/tmp/abx-replay-wget-depth2/files/127.0.0.1:8879/second.htmlâ€™
+
+     0K                                                       100%  223M=0s
+
+2026-10-06 22:46:09 (223 MB/s) - â€˜/tmp/abx-replay-wget-depth2/files/127.0.0.1:8879/second.htmlâ€™ saved [234/234]
+
+--2026-10-06 22:46:09--  http://127.0.0.1:8879/index.html
+Connecting to 127.0.0.1:8879... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 428 [text/html]
+Saving to: â€˜/tmp/abx-replay-wget-depth2/files/127.0.0.1:8879/index.htmlâ€™
+
+     0K                                                       100%  408M=0s
+
+2026-10-06 22:46:09 (408 MB/s) - â€˜/tmp/abx-replay-wget-depth2/files/127.0.0.1:8879/index.htmlâ€™ saved [428/428]
+
+FINISHED --2026-10-06 22:46:09--
+Total wall clock time: 0.01s
+Downloaded: 6 files, 19K in 0s (1.47 GB/s)
+
+

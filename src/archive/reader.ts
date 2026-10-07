@@ -53,6 +53,8 @@ export class ArchiveReader {
   replayHash?: string;
   size = 0;
   isWACZ = false;
+  isWARC = false;
+  private loader: Awaited<ReturnType<typeof createLoader>>;
   warnings: string[] = [];
   records: any[] = [];
   members: { path: string; size: number }[] = [];
@@ -71,6 +73,7 @@ export class ArchiveReader {
     loader?: Awaited<ReturnType<typeof createLoader>>,
   ) {
     if (loader) {
+      this.loader = loader;
       this.zip = new ZipRangeReader(loader);
       return;
     }
@@ -87,7 +90,7 @@ export class ArchiveReader {
         ? slice.stream()
         : new Uint8Array(await slice.arrayBuffer());
     };
-    this.zip = new ZipRangeReader({
+    this.loader = {
       canLoadOnDemand: true,
       canDoNegativeRange: true,
       headers: {},
@@ -106,7 +109,8 @@ export class ArchiveReader {
         response: new Response(head ? null : file.stream()),
         abort: null,
       }),
-    });
+    };
+    this.zip = new ZipRangeReader(this.loader);
   }
   async member(name: string) {
     const { reader } = await this.zip.loadFile(name);
@@ -147,6 +151,18 @@ export class ArchiveReader {
   }
   private async initialize() {
     const archive = this;
+    const prefix = (await this.loader.getRange(
+      0,
+      Math.min(5, this.size),
+      false,
+    )) as Uint8Array;
+    const gzip = prefix[0] === 0x1f && prefix[1] === 0x8b;
+    if (gzip || decoder.decode(prefix) === "WARC/") {
+      archive.isWARC = true;
+      archive.manifest = { format: gzip ? "warc.gz" : "warc" };
+      await archive.inspectReplay(gzip ? "warc.gz" : "warc");
+      return archive;
+    }
     const files = await archive.zip.load();
     archive.members = Object.entries(files)
       .filter(([name]) => !name.endsWith("/"))
@@ -204,9 +220,15 @@ export class ArchiveReader {
     }
     // Package-only inspection is available before import. Resource discovery and
     // replay both use the same mounted upstream MultiWACZ collection.
+    await archive.inspectReplay();
+    return archive;
+  }
+  private async inspectReplay(format?: "warc" | "warc.gz") {
+    const archive = this;
     if (archive.captureId) {
       const result = (await replayCommand({
         type: "inspect-wacz",
+        format,
         id: archive.captureId,
         sourceUrl: archive.sourceUrl,
       })) as {
@@ -230,7 +252,22 @@ export class ArchiveReader {
         })),
       );
     }
-    return archive;
+    // Crawlers often omit a pages list. HTML response identities are still
+    // navigable pages; keep each capture timestamp, including repeated URLs.
+    if (!archive.pages.length)
+      archive.pages.push(
+        ...archive.entries
+          .filter(
+            (entry) =>
+              /^https?:/.test(entry.url) &&
+              /^(text\/html|application\/xhtml\+xml)/i.test(entry.mime) &&
+              entry.status === 200,
+          )
+          .map((entry) => ({
+            url: entry.url,
+            ts: new Date(entry.ts).toISOString(),
+          })),
+      );
   }
   find(url: string, ts?: number) {
     // HTTP fragments identify locations within a response, while evidence URNs

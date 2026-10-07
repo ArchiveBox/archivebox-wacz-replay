@@ -56,6 +56,28 @@ for (const filename of ["iframetest.wacz", "archivebox-js.wacz"])
     await expect(replay.locator("body")).not.toContainText(
       "Sorry, this URL was not archived",
     );
+    if (filename === "iframetest.wacz") {
+      await expect(replay.frameLocator("iframe").locator("body")).toContainText(
+        "Inside iframe",
+      );
+    } else {
+      await expect
+        .poll(() =>
+          replay
+            .locator("img")
+            .evaluateAll(
+              (images) =>
+                images.filter(
+                  (image) => (image as HTMLImageElement).naturalWidth > 0,
+                ).length,
+            ),
+        )
+        .toBeGreaterThan(0);
+      await page.screenshot({
+        path: info.outputPath("replay.png"),
+        fullPage: true,
+      });
+    }
     await page.getByRole("button", { name: "Integrity", exact: true }).click();
     await page.getByRole("button", { name: "Verify hashes" }).click();
     await expect(page.locator("pre[role=status]")).toContainText("PASS");
@@ -178,76 +200,87 @@ test("server JSONL ZIP displays stored plugin assets and all metadata", async ({
   ).toEqual([]);
 });
 
-test("remote WACZ opens over HTTP ranges without an extension", async ({
-  page,
-}) => {
-  const { createServer } = await import("node:http");
-  const bytes = await readFile("tests/fixtures/iframetest.wacz");
-  let ranges = 0;
-  // Serve an existing capture with real HTTP byte ranges and CORS.
-  const server = createServer((request, response) => {
-    response.setHeader("Access-Control-Allow-Origin", "*");
-    response.setHeader("Access-Control-Allow-Headers", "Range");
-    response.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS");
-    if (request.method === "OPTIONS") {
-      response.writeHead(204);
-      response.end();
-      return;
-    }
-    response.setHeader(
-      "Access-Control-Expose-Headers",
-      "Content-Length, Content-Range, Accept-Ranges",
-    );
-    response.setHeader("Accept-Ranges", "bytes");
-    response.setHeader("Content-Type", "application/wacz");
-    const range = /^bytes=(\d*)-(\d*)$/.exec(request.headers.range || "");
-    if (range) {
-      ranges++;
-      const start = range[1]
-        ? Number(range[1])
-        : Math.max(0, bytes.length - Number(range[2]));
-      const end =
-        range[1] && range[2]
-          ? Math.min(Number(range[2]), bytes.length - 1)
-          : bytes.length - 1;
-      response.statusCode = 206;
+for (const filename of ["iframetest.wacz", "wget.warc", "grab-site.warc.gz"])
+  test(`remote archive opens over HTTP ranges: ${filename}`, async ({
+    page,
+  }) => {
+    const { createServer } = await import("node:http");
+    const bytes = await readFile(path.resolve("tests/fixtures", filename));
+    let ranges = 0;
+    // Serve an existing capture with real HTTP byte ranges and CORS.
+    const server = createServer((request, response) => {
+      response.setHeader("Access-Control-Allow-Origin", "*");
+      response.setHeader("Access-Control-Allow-Headers", "Range");
+      response.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS");
+      if (request.method === "OPTIONS") {
+        response.writeHead(204);
+        response.end();
+        return;
+      }
       response.setHeader(
-        "Content-Range",
-        `bytes ${start}-${end}/${bytes.length}`,
+        "Access-Control-Expose-Headers",
+        "Content-Length, Content-Range, Accept-Ranges",
       );
-      response.setHeader("Content-Length", end - start + 1);
-      response.end(
-        request.method === "HEAD" ? undefined : bytes.subarray(start, end + 1),
+      response.setHeader("Accept-Ranges", "bytes");
+      response.setHeader("Content-Type", "application/wacz");
+      const range = /^bytes=(\d*)-(\d*)$/.exec(request.headers.range || "");
+      if (range) {
+        ranges++;
+        const start = range[1]
+          ? Number(range[1])
+          : Math.max(0, bytes.length - Number(range[2]));
+        const end =
+          range[1] && range[2]
+            ? Math.min(Number(range[2]), bytes.length - 1)
+            : bytes.length - 1;
+        response.statusCode = 206;
+        response.setHeader(
+          "Content-Range",
+          `bytes ${start}-${end}/${bytes.length}`,
+        );
+        response.setHeader("Content-Length", end - start + 1);
+        response.end(
+          request.method === "HEAD"
+            ? undefined
+            : bytes.subarray(start, end + 1),
+        );
+      } else {
+        response.setHeader("Content-Length", bytes.length);
+        response.end(request.method === "HEAD" ? undefined : bytes);
+      }
+    });
+    await new Promise<void>((resolve) =>
+      server.listen(0, "127.0.0.1", resolve),
+    );
+    try {
+      const address = server.address() as { port: number };
+      await page.goto("/");
+      await page
+        .getByRole("textbox", { name: "Archive URL" })
+        .fill(`http://127.0.0.1:${address.port}/${filename}`);
+      await page.getByRole("button", { name: "Open URL", exact: true }).click();
+      await expect(
+        page.getByRole("navigation", { name: "Archive views" }),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "Replay", exact: true }).click();
+      await expect
+        .poll(() => page.frames().some((frame) => frame.url().includes("mp_/")))
+        .toBe(true);
+      const frame = page
+        .frames()
+        .find((frame) => frame.url().includes("mp_/"))!;
+      await expect(frame.locator("body")).toContainText(
+        filename === "iframetest.wacz"
+          ? "Outside iframe"
+          : "Archived crawler page",
       );
-    } else {
-      response.setHeader("Content-Length", bytes.length);
-      response.end(request.method === "HEAD" ? undefined : bytes);
+      expect(ranges).toBeGreaterThan(0);
+    } finally {
+      await new Promise<void>((resolve, reject) =>
+        server.close((error) => (error ? reject(error) : resolve())),
+      );
     }
   });
-  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
-  try {
-    const address = server.address() as { port: number };
-    await page.goto("/");
-    await page
-      .getByRole("textbox", { name: "Archive URL" })
-      .fill(`http://127.0.0.1:${address.port}/iframetest.wacz`);
-    await page.getByRole("button", { name: "Open URL", exact: true }).click();
-    await expect(
-      page.getByRole("navigation", { name: "Archive views" }),
-    ).toBeVisible();
-    await page.getByRole("button", { name: "Replay", exact: true }).click();
-    await expect
-      .poll(() => page.frames().some((frame) => frame.url().includes("mp_/")))
-      .toBe(true);
-    const frame = page.frames().find((frame) => frame.url().includes("mp_/"))!;
-    await expect(frame.locator("body")).toContainText("Outside iframe");
-    expect(ranges).toBeGreaterThan(0);
-  } finally {
-    await new Promise<void>((resolve, reject) =>
-      server.close((error) => (error ? reject(error) : resolve())),
-    );
-  }
-});
 
 test("nested ZIP browsing and folder ZIP download preserve members", async ({
   page,
