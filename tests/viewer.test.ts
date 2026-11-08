@@ -91,6 +91,13 @@ for (const filename of ["iframetest.wacz", "archivebox-js.wacz"])
         path: info.outputPath("replay.png"),
         fullPage: true,
       });
+      // A stable capture viewport must still follow real window resizing.
+      const viewport = page.viewportSize()!;
+      await page.setViewportSize({ width: 900, height: 650 });
+      await expect.poll(() => replay.evaluate(() => innerWidth)).toBe(900);
+      await expect.poll(() => replay.evaluate(() => innerHeight)).toBeGreaterThan(0);
+      await page.setViewportSize(viewport);
+      await expect.poll(() => replay.evaluate(() => innerWidth)).toBe(viewport.width);
     }
     await page.locator("summary").filter({hasText:/^Package integrity$/}).click();
     await page.getByRole("button", { name: "Verify hashes" }).click();
