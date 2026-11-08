@@ -1,3 +1,4 @@
+import { replayDiagnostics } from "./helpers/replay-diagnostics";
 import {openSnapshotOutput} from "./helpers/snapshot-controls";
 import { test, expect } from "@playwright/test";
 import { readFile, writeFile } from "node:fs/promises";
@@ -17,6 +18,7 @@ for (const filename of ["iframetest.wacz", "archivebox-js.wacz"])
       )
         external.push(request.url());
     });
+    await replayDiagnostics(page);
     await page.goto("/");
     await page
       .locator("input[type=file]")
