@@ -608,7 +608,21 @@ export function SnapshotDetail({
       (card) => card.dataset.pluginName === initial(),
     );
     selected?.classList.add("selected-card");
-    if (expandedStack.current)
+    const expandedGroup = expandedStack.current?.slice("output-stack-".length);
+    const expandedCard = [...cards, other].find(
+      (card) => card.dataset.outputGroup === expandedGroup,
+    );
+    // Restoring a stack after asynchronous discovery is not a new selection.
+    // Clicking its button would select the first card and replace the user's
+    // active output (including the archive file browser) as checks finish.
+    if (expandedCard)
+      container.dispatchEvent(
+        new CustomEvent("snapshot-preview-selected", {
+          detail: { card: expandedCard, revealStack: true },
+        }),
+      );
+    // An empty stack has no card to reveal and no first output to activate.
+    else if (expandedStack.current)
       container
         .querySelector<HTMLButtonElement>(`.${expandedStack.current}`)
         ?.click();

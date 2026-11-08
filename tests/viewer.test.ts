@@ -26,6 +26,16 @@ for (const filename of ["iframetest.wacz", "archivebox-js.wacz"])
     ).toBeVisible();
     await expect(page.locator(".error[role=alert]")).toHaveCount(0);
     await openSnapshotOutput(page, "files");
+    // Discovering more output cards must not replace a view the user opened.
+    await expect(page.locator("#snapshot-output-browser")).toHaveAttribute(
+      "aria-busy", "false",
+    );
+    await expect(
+      page.locator("#main-frame-wrapper .plugin-view:visible"),
+    ).toHaveAttribute("data-plugin", "files");
+    await expect(page.locator(".output-stack-other")).toHaveAttribute(
+      "aria-expanded", "true",
+    );
     await expect(
       page.getByRole("link", { name:"datapackage.json", exact: true }),
     ).toBeVisible();
