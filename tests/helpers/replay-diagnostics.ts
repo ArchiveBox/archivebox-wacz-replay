@@ -6,13 +6,14 @@ export async function replayDiagnostics(page: Page) {
     if (message.text().startsWith('[replay-diagnostic]')) console.log(message.text());
   });
   await page.addInitScript(() => {
+    const stringify = JSON.stringify.bind(JSON);
+    const frame = window.frameElement as HTMLElement | null;
     const report = (event: string) => {
       if (!location.pathname.includes('/w/')) return;
       const canvas = document.querySelector('canvas');
       const rect = canvas?.getBoundingClientRect();
       const style = canvas && getComputedStyle(canvas);
-      const frame = window.frameElement as HTMLElement | null;
-      console.log('[replay-diagnostic]', JSON.stringify({
+      console.log('[replay-diagnostic]', stringify({
         event, time: performance.timeOrigin + performance.now(), url: location.href,
         viewport: [innerWidth, innerHeight], ready: document.readyState,
         root: [document.documentElement?.clientWidth, document.documentElement?.clientHeight],
@@ -23,7 +24,7 @@ export async function replayDiagnostics(page: Page) {
       }));
     };
     addEventListener('resize', () => report('resize'), true);
-    addEventListener('error', event => report('error: ' + event.message), true);
+    addEventListener('error', event => { if (event.message) report('error: ' + event.message); }, true);
     addEventListener('DOMContentLoaded', () => report('DOMContentLoaded'));
     addEventListener('load', () => report('load'));
     const observer = new MutationObserver(() => {
