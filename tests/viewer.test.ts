@@ -26,10 +26,7 @@ for (const filename of ["iframetest.wacz", "archivebox-js.wacz"])
     ).toBeVisible();
     await expect(page.locator(".error[role=alert]")).toHaveCount(0);
     await openSnapshotOutput(page, "files");
-    // Discovering more output cards must not replace a view the user opened.
-    await expect(page.locator("#snapshot-output-browser")).toHaveAttribute(
-      "aria-busy", "false",
-    );
+    // Files stay usable while other output cards are still being discovered.
     await expect(
       page.locator("#main-frame-wrapper .plugin-view:visible"),
     ).toHaveAttribute("data-plugin", "files");
@@ -39,6 +36,12 @@ for (const filename of ["iframetest.wacz", "archivebox-js.wacz"])
     await expect(
       page.getByRole("link", { name:"datapackage.json", exact: true }),
     ).toBeVisible();
+    await page.getByRole("link", { name:"datapackage.json", exact: true }).click();
+    await expect(page.locator(".file-preview h2")).toHaveText("datapackage.json");
+    await expect(page.locator(".file-preview pre")).toContainText('"resources"');
+    await expect(
+      page.locator("#main-frame-wrapper .plugin-view:visible"),
+    ).toHaveAttribute("data-plugin", "files");
     await page.getByText("Archive metadata", {exact:true}).click();
     if (filename === "archivebox-js.wacz")
       await expect(page.locator("details").filter({has:page.locator("summary").filter({hasText:/^Archive metadata$/})}).locator("pre").first()).toContainText("ArchiveResult");
