@@ -12,12 +12,25 @@ export function ReplayWebPage({ archive, url, ts }: { archive: ArchiveReader; ur
   React.useEffect(() => {
     let active = true;
     let replay: Replay | undefined;
+    const sizeReplay = (bounds: Pick<DOMRectReadOnly, 'width' | 'height'>) => {
+      // ReplayWeb.page's nested percentage heights can momentarily resolve to
+      // zero during full-page capture or a hidden-panel layout transition.
+      // Keep the last real viewport until the host has a nonzero size again.
+      if (replay && bounds.width > 0 && bounds.height > 0) {
+        replay.style.width = `${bounds.width}px`;
+        replay.style.height = `${bounds.height}px`;
+      }
+    };
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry) sizeReplay(entry.contentRect);
+    });
+    if (host.current) observer.observe(host.current);
     setError('');
     setMounting(true);
     const mount = async () => {
       replay = await createReplay(archive,url,ts);
       if (!active || !host.current) return;
-      replay.style.height = '100%';
+      sizeReplay(host.current.getBoundingClientRect());
       host.current.replaceChildren(replay);
       await replay.updateComplete;
       if (active) setMounting(false);
@@ -25,6 +38,7 @@ export function ReplayWebPage({ archive, url, ts }: { archive: ArchiveReader; ur
     void mount().catch(reason => { if (active) { setError(String(reason)); setMounting(false); } });
     return () => {
       active = false;
+      observer.disconnect();
       replay?.clearHilite(true);
       replay?.remove();
     };
